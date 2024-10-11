@@ -1,0 +1,205 @@
+import React, { useState } from "react"
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native"
+import Input from "../components/Input"
+import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons"
+import { login } from "../services/authService"
+import ShowSuccess from "../components/ShowSucess"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useNavigation } from "@react-navigation/native"
+import { useRouter } from "expo-router"
+
+const LoginScreen = () => {
+  const [data, setData] = useState({})
+  const [error, setError] = useState({})
+  const [showSuccess, setShowSuccess] = useState(false)
+  const navigation = useNavigation()
+  const router = useRouter()
+
+  const [form, setForm] = useState({
+    identifier: "",
+    password: "",
+  })
+
+  const handleInputChange = (name, value) => {
+    setForm({
+      ...form,
+      [name]: value,
+    })
+  }
+
+  const onSubmit = async () => {
+    setError({})
+    const response = await login(form)
+    setData(response)
+    console.log(data)
+    if (response.status === "400") {
+      const errorField = response.message.match(/Invalid param: (\w+)/)
+      const errorFieldMissing = response.message.match(/Missing param: (\w+)/)
+
+      if (errorField) {
+        const fieldName = errorField[1]
+        setError((prev) => ({
+          ...prev,
+          [fieldName]: `O campo ${[fieldName]} é inválido`,
+        }))
+      } else if (errorFieldMissing) {
+        const fieldName = errorFieldMissing[1]
+        setError((prev) => ({
+          ...prev,
+          [fieldName]: `O campo ${[fieldName]} está faltando.`,
+        }))
+      }
+    } else {
+      const token = response.token
+      await AsyncStorage.setItem("authToken", token)
+      setShowSuccess(true)
+    }
+
+    console.log(error)
+  }
+
+  const handleAnimationFinish = () => {
+    router.push("/(tabs)/HomeScreen")
+  }
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <View style={{ flex: 1, backgroundColor: "#F9FAFA" }}>
+        <View>
+          <ImageBackground
+            source={{
+              uri: "https://cdn.usegalileo.ai/stability/f29c18e0-b114-4180-950a-2356672b72d6.png",
+            }}
+            style={{
+              width: "100%",
+              height: 300,
+              justifyContent: "flex-end",
+              borderRadius: 16,
+              marginBottom: 20,
+            }}
+            imageStyle={{ borderRadius: 16 }}
+          />
+        </View>
+
+        <Input
+          name="identifier"
+          value={form.identifier}
+          placeholder={"Email ou CPF"}
+          onChange={handleInputChange}
+          icon={<FontAwesome6 name="user-large" size={24} color="#7D7D7D" />}
+        />
+        {error.identifier && (
+          <Text style={{ color: "red", paddingHorizontal: 16 }}>
+            Identificador incorreto
+          </Text>
+        )}
+
+        <Input
+          name="password"
+          value={form.password}
+          placeholder={"Senha"}
+          onChange={handleInputChange}
+          icon={<FontAwesome5 name="key" size={24} color="#7D7D7D" />}
+        />
+        {error.password && (
+          <Text style={{ color: "red", paddingHorizontal: 16 }}>{error.password}</Text>
+        )}
+
+        {/* Sign Up Button */}
+        <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#607AFB",
+              borderRadius: 16,
+              paddingVertical: 12,
+              alignItems: "center",
+            }}
+            onPress={onSubmit}
+          >
+            <Text style={{ color: "#F9FAFA", fontWeight: "bold", fontSize: 16 }}>
+              Sign In
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Social Media Sign-In */}
+        <Text
+          style={{
+            color: "#3C3F4A",
+            fontSize: 14,
+            textAlign: "center",
+            paddingBottom: 12,
+            paddingTop: 8,
+          }}
+        >
+          Ou faça login nas redes sociais
+        </Text>
+
+        {/* Social Media Buttons */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              borderColor: "#D5D6DD",
+              paddingVertical: 12,
+              paddingHorizontal: 24,
+              borderRadius: 16,
+            }}
+          >
+            <Text>Apple</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              borderColor: "#D5D6DD",
+              paddingVertical: 12,
+              paddingHorizontal: 24,
+              borderRadius: 16,
+            }}
+          >
+            <Text>Google</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              borderColor: "#D5D6DD",
+              paddingVertical: 12,
+              paddingHorizontal: 24,
+              borderRadius: 16,
+            }}
+          >
+            <Text>Facebook</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Footer Space */}
+        <View style={{ height: 20, backgroundColor: "#F9FAFA" }} />
+      </View>
+      <ShowSuccess
+        showSuccess={showSuccess}
+        handleAnimationFinish={handleAnimationFinish}
+      />
+    </KeyboardAvoidingView>
+  )
+}
+
+export default LoginScreen
