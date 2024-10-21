@@ -4,8 +4,8 @@ import { StyleSheet, Text, View } from "react-native"
 export default function Button({ href, text }) {
   return (
     <View style={styles.container}>
-      <Link href={href}>
-        <Text style={styles.text}>{text}</Text>
+      <Link style={styles.text} href={href}>
+        <Text>{text}</Text>
       </Link>
     </View>
   )
