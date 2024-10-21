@@ -3,6 +3,7 @@ import { View, ActivityIndicator, ImageBackground, Text, Image } from "react-nat
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useRouter } from "expo-router"
 import logo from "../assets/images/logo-logali.png"
+import { check_auth } from "../services/authService"
 
 export default function Index() {
   const [loading, setLoading] = useState(true)
@@ -13,9 +14,24 @@ export default function Index() {
       const token = await AsyncStorage.getItem("authToken")
 
       // Aguarda 2 segundos antes de redirecionar
-      setTimeout(() => {
+      setTimeout(async () => {
         if (token) {
-          router.replace("/(tabs)/HomeScreen")
+          try {
+            const response = await check_auth(token)
+            console.log(response)
+
+            if (response.userId) {
+              // Se o token for válido, redireciona para HomeScreen
+              router.replace("/(tabs)/HomeScreen")
+            } else {
+              // Se o token não for válido, redireciona para WelcomeScreen
+              await AsyncStorage.removeItem("authToken")
+              router.replace("/WelcomeScreen")
+            }
+          } catch (error) {
+            console.error("Erro ao verificar autenticação:", error)
+            router.replace("/WelcomeScreen") // Caso ocorra um erro, redireciona
+          }
         } else {
           router.replace("/WelcomeScreen")
         }
@@ -28,7 +44,6 @@ export default function Index() {
   }, [])
 
   if (loading) {
-    // Exibe o indicador de carregamento enquanto verifica o token
     return (
       <View
         style={{
