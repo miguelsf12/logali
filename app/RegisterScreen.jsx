@@ -26,6 +26,7 @@ const RegisterScreen = () => {
   const [locationExpo, setLocationExpo] = useState(null)
   const [locationActual, setLocationActual] = useState(null)
   const [errorMsg, setErrorMsg] = useState(null)
+  const [showPassword, setShowPassword] = useState(false)
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -197,8 +198,17 @@ const RegisterScreen = () => {
             name="password"
             value={form.password}
             placeholder={"Senha"}
-            onChange={handleInputChange}
-            icon={<FontAwesome5 name="key" size={24} color="#7D7D7D" />}
+            onChange={(name, value) => handleInputChange("password", value)}
+            secureTextEntry={!showPassword} // Oculta a senha se showPassword for false
+            icon={
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <Ionicons
+                  name={showPassword ? "eye" : "eye-off"}
+                  size={24}
+                  color="#607AFB"
+                />
+              </TouchableOpacity>
+            }
           />
           {error.password && (
             <Text style={{ color: "red", paddingHorizontal: 16 }}>{error.password}</Text>
