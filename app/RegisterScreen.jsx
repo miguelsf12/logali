@@ -100,6 +100,8 @@ const RegisterScreen = () => {
               fontSize: 12,
               fontWeight: "bold",
               textAlign: "center",
+              paddingLeft: 20,
+              paddingRight: 20,
               paddingBottom: 12,
               paddingTop: 20,
             }}
