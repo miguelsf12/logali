@@ -1,6 +1,14 @@
 import { TextInput, View } from "react-native"
 
-export default function Input({ placeholder, onChange, name, value, onSubmit, icon }) {
+export default function Input({
+  placeholder,
+  onChange,
+  name,
+  value,
+  onSubmit,
+  icon,
+  secureTextEntry,
+}) {
   return (
     <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
       <View
@@ -21,6 +29,7 @@ export default function Input({ placeholder, onChange, name, value, onSubmit, ic
             borderTopLeftRadius: 16,
             borderBottomLeftRadius: 16,
           }}
+          secureTextEntry={secureTextEntry}
           value={value}
           onChangeText={(text) => onChange(name, text)}
           onSubmit={onSubmit}
