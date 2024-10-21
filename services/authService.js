@@ -7,3 +7,7 @@ export const login = async (formData) => {
 export const register = async (formData) => {
   return await api.post("/user/auth/register", { formData })
 }
+
+export const check_auth = async (token) => {
+  return await api.get("/user/auth/check-auth")
+}
