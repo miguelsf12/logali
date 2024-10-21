@@ -8,7 +8,7 @@ import {
   Platform,
 } from "react-native"
 import Input from "../components/Input"
-import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons"
+import { FontAwesome5, FontAwesome6, Ionicons } from "@expo/vector-icons"
 import { login } from "../services/authService"
 import ShowSuccess from "../components/ShowSucess"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -18,6 +18,7 @@ import { useRouter } from "expo-router"
 const LoginScreen = () => {
   const [data, setData] = useState({})
   const [error, setError] = useState({})
+  const [showPassword, setShowPassword] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const navigation = useNavigation()
   const router = useRouter()
@@ -111,8 +112,17 @@ const LoginScreen = () => {
           name="password"
           value={form.password}
           placeholder={"Senha"}
-          onChange={handleInputChange}
-          icon={<FontAwesome5 name="key" size={24} color="#7D7D7D" />}
+          onChange={(name, value) => handleInputChange("password", value)}
+          secureTextEntry={!showPassword} // Oculta a senha se showPassword for false
+          icon={
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <Ionicons
+                name={showPassword ? "eye" : "eye-off"}
+                size={24}
+                color="#607AFB"
+              />
+            </TouchableOpacity>
+          }
         />
         {error.password && (
           <Text style={{ color: "red", paddingHorizontal: 16 }}>{error.password}</Text>
@@ -136,7 +146,7 @@ const LoginScreen = () => {
         </View>
 
         {/* Social Media Sign-In */}
-        <Text
+        {/* <Text
           style={{
             color: "#3C3F4A",
             fontSize: 14,
@@ -146,10 +156,10 @@ const LoginScreen = () => {
           }}
         >
           Ou faça login nas redes sociais
-        </Text>
+        </Text> */}
 
         {/* Social Media Buttons */}
-        <View
+        {/* <View
           style={{
             flexDirection: "row",
             justifyContent: "space-around",
@@ -192,10 +202,7 @@ const LoginScreen = () => {
           >
             <Text>Facebook</Text>
           </TouchableOpacity>
-        </View>
-
-        {/* Footer Space */}
-        <View style={{ height: 20, backgroundColor: "#F9FAFA" }} />
+        </View> */}
       </View>
       <ShowSuccess
         showSuccess={showSuccess}
