@@ -38,7 +38,9 @@ const LoginScreen = () => {
     setError({})
     const response = await login(form)
     setData(response)
-    console.log(data)
+    // console.log(response)
+    console.log(JSON.stringify(response, null, 2))
+
     if (response.status === "400") {
       const errorField = response.message.match(/Invalid param: (\w+)/)
       const errorFieldMissing = response.message.match(/Missing param: (\w+)/)
@@ -66,7 +68,7 @@ const LoginScreen = () => {
   }
 
   const handleAnimationFinish = () => {
-    router.push("/(tabs)/HomeScreen")
+    router.replace("/(tabs)/HomeScreen")
   }
 
   return (
@@ -98,10 +100,11 @@ const LoginScreen = () => {
           onChange={handleInputChange}
           icon={<FontAwesome6 name="user-large" size={24} color="#7D7D7D" />}
         />
-        {error.identifier && (
-          <Text style={{ color: "red", paddingHorizontal: 16 }}>
-            Identificador incorreto
-          </Text>
+        {error.cpf && (
+          <Text style={{ color: "red", paddingHorizontal: 16 }}>CPF incorreto</Text>
+        )}
+        {error.email && (
+          <Text style={{ color: "red", paddingHorizontal: 16 }}>Email incorreto</Text>
         )}
 
         <Input
