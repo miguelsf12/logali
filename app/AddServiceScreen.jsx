@@ -70,11 +70,20 @@ const AddServiceScreen = () => {
       formData.append("location", form.location)
 
       // Adiciona as imagens ao formData
+      // images.forEach((image, index) => {
+      //   formData.append(`images`, {
+      //     uri: image.uri,
+      //     type: image.type,
+      //     name: image.uri.split("/").pop(),
+      //   })
+      // })
+
       images.forEach((image, index) => {
+        console.log("Image URI: ", image.uri) // Verifique se a URI é acessível e correta
         formData.append(`images`, {
           uri: image.uri,
-          type: image.type,
-          name: image.uri.split("/").pop(),
+          type: image.mimeType, // Usando o mimeType ao invés de type, pois ele é específico
+          name: image.fileName, // Usando fileName ao invés de extrair do URI
         })
       })
 
