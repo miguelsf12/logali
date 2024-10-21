@@ -130,7 +130,7 @@ const LoginScreen = () => {
             onPress={onSubmit}
           >
             <Text style={{ color: "#F9FAFA", fontWeight: "bold", fontSize: 16 }}>
-              Sign In
+              Entrar
             </Text>
           </TouchableOpacity>
         </View>

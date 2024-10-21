@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
   View,
   Text,
@@ -16,12 +16,16 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5"
 import { register } from "../services/authService"
 import { useNavigation } from "@react-navigation/native"
 import ShowSuccess from "../components/ShowSucess"
+import * as Location from "expo-location"
+import { sendActualLocation } from "../services/clientService"
 
 const RegisterScreen = () => {
   const [data, setData] = useState({})
   const [error, setError] = useState({})
   const [showSuccess, setShowSuccess] = useState(false)
-
+  const [locationExpo, setLocationExpo] = useState(null)
+  const [locationActual, setLocationActual] = useState(null)
+  const [errorMsg, setErrorMsg] = useState(null)
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -30,9 +34,56 @@ const RegisterScreen = () => {
     address: "",
   })
 
+  const handleGetLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== "granted") {
+      setErrorMsg("Permission to access location was denied")
+      return
+    }
+
+    let location = await Location.getCurrentPositionAsync({})
+    const { latitude, longitude } = location.coords
+    const coords = [latitude, longitude]
+    const address = `${coords[0]}, ${coords[1]}`
+
+    let loc = await sendActualLocation({ address })
+    setLocationActual(loc.address)
+    setForm((prev) => ({ ...prev, address: loc.address }))
+    console.log(JSON.stringify(loc, null, 2))
+  }
+
+  let text = "Waiting..."
+  if (errorMsg) {
+    text = errorMsg
+  } else if (locationExpo) {
+    text = JSON.stringify(locationExpo)
+  }
+
   const navigation = useNavigation()
 
+  const formatCPF = (cpf) => {
+    // Remove tudo que não for número
+    cpf = cpf.replace(/\D/g, "")
+
+    if (cpf.length > 11) {
+      cpf = cpf.substring(0, 11)
+    }
+
+    // Adiciona a formatação: XXX.XXX.XXX-XX
+    if (cpf.length <= 11) {
+      cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
+      cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
+      cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+    }
+
+    return cpf
+  }
+
   const handleInputChange = (name, value) => {
+    if (name === "cpf") {
+      value = formatCPF(value)
+    }
+
     setForm({
       ...form,
       [name]: value,
@@ -135,7 +186,7 @@ const RegisterScreen = () => {
             name="cpf"
             value={form.cpf}
             placeholder={"CPF"}
-            onChange={handleInputChange}
+            onChange={(name, value) => handleInputChange("cpf", value)}
             icon={<AntDesign name="idcard" size={24} color="#7D7D7D" />}
           />
           {error && (
@@ -153,12 +204,17 @@ const RegisterScreen = () => {
             <Text style={{ color: "red", paddingHorizontal: 16 }}>{error.password}</Text>
           )}
 
+          {/* Input de endereço com ícone de localização */}
           <Input
             name="address"
-            value={form.address}
+            value={form.address} // Apenas use o valor do form para o endereço
             placeholder={"Endereço"}
-            onChange={handleInputChange}
-            icon={<Ionicons name="location-sharp" size={24} color="#7D7D7D" />}
+            onChange={(name, value) => handleInputChange("address", value)} // Certifique-se de que onChange está salvando corretamente o input do usuário
+            icon={
+              <TouchableOpacity onPress={handleGetLocation}>
+                <Ionicons name="location-sharp" size={24} color="#607AFB" />
+              </TouchableOpacity>
+            }
           />
 
           {/* Sign Up Button */}
@@ -173,7 +229,7 @@ const RegisterScreen = () => {
               onPress={onSubmit}
             >
               <Text style={{ color: "#F9FAFA", fontWeight: "bold", fontSize: 16 }}>
-                Sign Up
+                Registrar
               </Text>
             </TouchableOpacity>
           </View>
