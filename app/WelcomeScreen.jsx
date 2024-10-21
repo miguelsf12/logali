@@ -9,18 +9,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 export default function WelcomeScreen() {
   const router = useRouter()
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = await AsyncStorage.getItem("authToken")
-      if (token) {
-        router.push("/(tabs)/HomeScreen")
-      } else {
-        router.push("/LoginScreen")
-      }
-    }
-
-    checkAuth()
-  }, [])
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -38,7 +26,6 @@ export default function WelcomeScreen() {
         <View style={styles.authContainer}>
           <Button text={"LOGIN"} href={"/LoginScreen"} />
           <Button text={"REGISTER"} href={"/RegisterScreen"} />
-          <Button text={"HOME"} href={"/HomeScreen"} />
         </View>
       </ImageBackground>
     </View>
@@ -69,7 +56,8 @@ const styles = StyleSheet.create({
   },
   authContainer: {
     position: "absolute",
-    bottom: 100,
+    bottom: "8%",
+    marginTop: 10,
     alignSelf: "center",
   },
 })
