@@ -245,7 +245,7 @@ const RegisterScreen = () => {
           </View>
 
           {/* Social Media Sign-In */}
-          <Text
+          {/* <Text
             style={{
               color: "#3C3F4A",
               fontSize: 14,
@@ -255,10 +255,10 @@ const RegisterScreen = () => {
             }}
           >
             Ou faça registro com redes sociais
-          </Text>
+          </Text> */}
 
           {/* Social Media Buttons */}
-          <View
+          {/* <View
             style={{
               flexDirection: "row",
               justifyContent: "space-around",
@@ -301,10 +301,7 @@ const RegisterScreen = () => {
             >
               <Text>Facebook</Text>
             </TouchableOpacity>
-          </View>
-
-          {/* Footer Space */}
-          <View style={{ height: 20, backgroundColor: "#F9FAFA" }} />
+          </View> */}
         </View>
       </ScrollView>
 
