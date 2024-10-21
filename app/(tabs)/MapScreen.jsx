@@ -8,6 +8,7 @@ import { sendActualLocation } from "../../services/clientService"
 
 export default function MapScreen() {
   const [inputValue, setInputValue] = useState(null)
+  const [token, setToken] = useState(null)
   const [locationActual, setLocationActual] = useState({})
   const [address, setAddress] = useState({
     address: "",
@@ -16,6 +17,9 @@ export default function MapScreen() {
   useEffect(() => {
     const fetchLocation = async () => {
       try {
+        const token = await AsyncStorage.getItem("authToken")
+        setToken(token)
+
         const storedLocation = await AsyncStorage.getItem("actualLocation")
         if (storedLocation) {
           const locationData = JSON.parse(storedLocation)
@@ -30,6 +34,12 @@ export default function MapScreen() {
     fetchLocation()
   }, [])
 
+  useEffect(() => {
+    if (locationActual && locationActual.address) {
+      setInputValue(locationActual.address)
+    }
+  }, [locationActual])
+
   const handleInputChange = (name, value) => {
     setInputValue(value)
     setAddress((prevForm) => ({
@@ -40,7 +50,7 @@ export default function MapScreen() {
 
   const onSubmitLoc = async () => {
     try {
-      const response = await sendActualLocation(address)
+      const response = await sendActualLocation(address, token)
       if (!response.status) {
         setLocationActual(response)
         await AsyncStorage.setItem("actualLocation", JSON.stringify(response))
