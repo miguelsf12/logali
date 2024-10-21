@@ -13,7 +13,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import Input from "../../components/Input"
 import homeImage from "../../assets/images/home-image.jpeg"
 import { FontAwesome } from "@expo/vector-icons"
-import { sendActualLocation } from "../../services/clientService"
+import { getUserProfile, sendActualLocation } from "../../services/clientService"
+import {
+  getAllServices,
+  getMyService,
+  getServicesFiltered,
+} from "../../services/serviceService"
+import Slider from "@react-native-community/slider"
+import { router } from "expo-router"
+import { debounce } from "lodash"
+import { ActivityIndicator } from "react-native"
 
 const popularServices = [
   { id: 1, name: "Serviço 1", image: "url_imagem_1" },
@@ -24,35 +33,69 @@ const popularServices = [
 export default function HomeScreen() {
   const navigation = useNavigation()
   const [token, setToken] = useState(null)
-  const [location, setLocation] = useState({})
+  const [userOn, setUserOn] = useState({})
+  // const [myService, setMyService] = useState({})
+  const [radius, setRadius] = useState(5)
+  const [services, setServices] = useState([])
+  const [servicesAround, setServicesAround] = useState([])
+  const [loading, setLoading] = useState(false)
   const [locationActual, setLocationActual] = useState(null)
   const [address, setAddress] = useState({
     address: "",
   })
   const [inputValue, setInputValue] = useState(address.address)
 
-  const fetchToken = async () => {
-    const storedToken = await AsyncStorage.getItem("authToken")
-    setToken(storedToken)
-  }
-
   useEffect(() => {
     const checkToken = async () => {
-      if (!token) {
-        navigation.navigate("LoginScreen")
+      try {
+        const token = await AsyncStorage.getItem("authToken")
+        setToken(token)
+
+        if (!token) {
+          navigation.navigate("LoginScreen")
+        }
+
+        // const myService = await getMyService(token)
+        // setMyService(myService)
+
+        const allServices = await getAllServices(token)
+
+        setServices(allServices)
+
+        const user = await getUserProfile(token)
+        setUserOn(user)
+
+        console.log(JSON.stringify(user, null, 2))
+      } catch (error) {
+        console.error("Erro ao buscar usuário:", error)
       }
     }
 
-    if (token !== null) {
-      checkToken()
-    }
+    checkToken()
   }, [token, navigation])
 
   useEffect(() => {
-    if (location && location.address) {
-      setInputValue(location.address)
+    const fetchServicesAround = debounce(async () => {
+      setLoading(true)
+      try {
+        const filters = { radius }
+        console.log(radius)
+        const response = await getServicesFiltered(filters, token)
+        console.log(response)
+        setServicesAround(response)
+      } catch (error) {
+        console.error("Erro ao buscar serviços filtrados:", error)
+      } finally {
+        setLoading(false)
+      }
+    }, 1000)
+
+    fetchServicesAround()
+
+    return () => {
+      fetchServicesAround.cancel()
     }
-  }, [location])
+  }, [token, radius])
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -71,6 +114,12 @@ export default function HomeScreen() {
     fetchLocation()
   }, [locationActual])
 
+  useEffect(() => {
+    if (locationActual && locationActual.address) {
+      setInputValue(locationActual.address)
+    }
+  }, [locationActual])
+
   const handleInputChange = (name, value) => {
     setInputValue(value)
     setAddress((prevForm) => ({
@@ -81,15 +130,27 @@ export default function HomeScreen() {
 
   const onSubmitLoc = async () => {
     try {
-      const response = await sendActualLocation(address)
+      const response = await sendActualLocation(address, token)
       if (!response.status) {
-        setLocation(response)
+        setLocationActual(response)
         await AsyncStorage.setItem("actualLocation", JSON.stringify(response))
       }
     } catch (error) {
       console.error(error)
     }
-    console.log(location)
+  }
+
+  const toAddService = () => {
+    router.push("AddServiceScreen")
+  }
+
+  const toMyService = () => {
+    // router.push("OwnerServiceScreen")
+    navigation.navigate("OwnerServiceScreen")
+  }
+
+  const toService = (serviceId) => {
+    router.push(`/service/${serviceId}`)
   }
 
   return (
@@ -124,25 +185,88 @@ export default function HomeScreen() {
               <Pressable style={styles.getStartedButton}>
                 <Text style={styles.getStartedTextFind}>Procurar</Text>
               </Pressable>
-              <Pressable style={styles.getStartedButton}>
-                <Text style={styles.getStartedTextRegister}>Cadastrar Serviço</Text>
-              </Pressable>
+              {!userOn.provider ? (
+                <Pressable onPress={toAddService} style={styles.getStartedButton}>
+                  <Text style={styles.getStartedTextRegister}>Cadastrar Serviço</Text>
+                </Pressable>
+              ) : (
+                <Pressable onPress={toMyService} style={styles.getStartedButton}>
+                  <Text style={styles.getStartedTextRegister}>Meu serviço</Text>
+                </Pressable>
+              )}
             </View>
           </View>
 
           {/* Popular services */}
-          {/* <View style={styles.containerService}>
+          <View style={styles.containerService}>
             <Text style={styles.title}>Serviços Populares</Text>
 
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              {popularServices.map((service) => (
-                <View key={service.id} style={styles.card}>
-                  <Image source={{ uri: service.image }} style={styles.image} />
+              {services.map((service) => (
+                <TouchableOpacity
+                  onPress={() => toService(service._id)}
+                  key={service._id}
+                  style={styles.card}
+                >
+                  <Image
+                    source={{
+                      uri: `http://192.168.1.4:3000/public/service/images/${service.images[0]}`,
+                    }}
+                    style={styles.image}
+                  />
                   <Text style={styles.serviceName}>{service.name}</Text>
-                </View>
+                </TouchableOpacity>
               ))}
             </ScrollView>
-          </View> */}
+          </View>
+
+          {/* Serviços Proximos */}
+          <View style={styles.containerService}>
+            <Text style={styles.title}>Serviços Próximos</Text>
+            <View style={styles.row}>
+              <Text style={styles.label}>Alterar raio</Text>
+              <Text style={styles.radiusValue}>{radius} km</Text>
+            </View>
+
+            <View style={styles.sliderContainer}>
+              <Slider
+                style={styles.slider}
+                minimumValue={1}
+                maximumValue={100}
+                step={1}
+                value={radius}
+                onValueChange={(value) => setRadius(value)}
+                minimumTrackTintColor="#019863"
+                maximumTrackTintColor="#E9DFCE"
+                thumbTintColor="#019863"
+              />
+            </View>
+
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+              {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" /> // Exibe o loading
+              ) : servicesAround.length < 1 ? (
+                <Text style={styles.noServicesText}>Nenhum serviço próximo</Text>
+              ) : (
+                servicesAround.length != 0 &&
+                servicesAround.map((service) => (
+                  <TouchableOpacity
+                    onPress={() => toService(service._id)} // Passa a função corretamente
+                    key={service._id}
+                    style={styles.card}
+                  >
+                    <Image
+                      source={{
+                        uri: `http://192.168.1.4:3000/public/service/images/${service.images[0]}`,
+                      }}
+                      style={styles.image}
+                    />
+                    <Text style={styles.serviceName}>{service.name}</Text>
+                  </TouchableOpacity>
+                ))
+              )}
+            </ScrollView>
+          </View>
         </View>
       </ScrollView>
       {/* <Navigation /> */}
@@ -218,12 +342,46 @@ const styles = StyleSheet.create({
     elevation: 2, // Adiciona uma leve sombra
   },
   image: {
-    width: 120,
+    width: "100%",
     height: 120,
     borderRadius: 8,
   },
   serviceName: {
     marginTop: 8,
     textAlign: "center",
+  },
+  headerText: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 20,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#1C160C",
+  },
+  radiusValueMobile: {
+    fontSize: 14,
+    color: "#1C160C",
+    display: "none",
+  },
+  sliderContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  slider: {
+    flex: 1,
+    height: 40,
+  },
+  radiusValue: {
+    fontSize: 16,
+    color: "#1C160C",
+    paddingLeft: 8,
   },
 })
