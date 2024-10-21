@@ -1,6 +1,7 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome"
 import React from "react"
 import { Tabs } from "expo-router"
+import { FontAwesome6 } from "@expo/vector-icons"
 
 const TabsLayout = () => {
   return (
@@ -20,13 +21,15 @@ const TabsLayout = () => {
         }}
       />
 
-      {/* <Tabs.Screen
-        name="ServiceScreen"
+      <Tabs.Screen
+        name="OwnerServiceScreen"
         options={{
-          title: "Serviços",
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="user" color={color} />,
+          title: "Meu Serviço",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome6 name="briefcase" size={28} color={color} />
+          ),
         }}
-      /> */}
+      />
 
       <Tabs.Screen
         name="ProfileScreen"
