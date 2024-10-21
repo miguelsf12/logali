@@ -1,0 +1,22 @@
+[
+  { "id": 1, "name": "Encanamento" },
+  { "id": 2, "name": "Elétrica" },
+  { "id": 3, "name": "Limpeza" },
+  { "id": 4, "name": "Jardinagem" },
+  { "id": 5, "name": "Carpintaria" },
+  { "id": 6, "name": "Pintura" },
+  { "id": 7, "name": "Reparos Automotivos" },
+  { "id": 8, "name": "Suporte de TI" },
+  { "id": 9, "name": "Design Gráfico" },
+  { "id": 10, "name": "Fotografia" },
+  { "id": 11, "name": "Aulas Particulares" },
+  { "id": 12, "name": "Buffet" },
+  { "id": 13, "name": "Treinamento Físico" },
+  { "id": 14, "name": "Cuidado de Animais" },
+  { "id": 15, "name": "Cabeleireiro" },
+  { "id": 16, "name": "Maquiador" },
+  { "id": 17, "name": "Massoterapia" },
+  { "id": 18, "name": "Organização de Eventos" },
+  { "id": 19, "name": "Serviços de Mudança" },
+  { "id": 20, "name": "Reformas Domésticas" }
+]
