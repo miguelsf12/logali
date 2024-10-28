@@ -28,7 +28,31 @@ const LoginScreen = () => {
     password: "",
   })
 
+  const formatCPF = (cpf) => {
+    // Remove tudo que não for número
+    cpf = cpf.replace(/\D/g, "")
+
+    if (cpf.length > 11) {
+      cpf = cpf.substring(0, 11)
+    }
+
+    // Adiciona a formatação: XXX.XXX.XXX-XX
+    if (cpf.length === 11) {
+      cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
+      cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
+      cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+    }
+
+    return cpf
+  }
+
   const handleInputChange = (name, value) => {
+    if (name === "identifier") {
+      if (!value.includes("@") && value.replace(/\D/g, "").length >= 11) {
+        value = formatCPF(value)
+      }
+    }
+
     setForm({
       ...form,
       [name]: value,
