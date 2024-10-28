@@ -78,7 +78,7 @@ const ServiceDetailScreen = () => {
               <View key={index} style={styles.imageWrapper}>
                 <Image
                   source={{
-                    uri: `http://192.168.1.4:3000/public/service/images/${imagePath}`,
+                    uri: `${imagePath}`,
                   }}
                   style={styles.image}
                 />
