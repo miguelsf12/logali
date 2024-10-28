@@ -55,9 +55,6 @@ export default function HomeScreen() {
           navigation.navigate("LoginScreen")
         }
 
-        // const myService = await getMyService(token)
-        // setMyService(myService)
-
         const allServices = await getAllServices(token)
 
         setServices(allServices)
@@ -100,6 +97,9 @@ export default function HomeScreen() {
   useEffect(() => {
     const fetchLocation = async () => {
       try {
+        const token = await AsyncStorage.getItem("authToken")
+        setToken(token)
+
         const storedLocation = await AsyncStorage.getItem("actualLocation")
         if (storedLocation) {
           const locationData = JSON.parse(storedLocation)
@@ -111,14 +111,19 @@ export default function HomeScreen() {
       }
     }
 
-    fetchLocation()
-  }, [locationActual])
+    const unsubscribe = navigation.addListener("focus", () => {
+      // Executa fetchLocation toda vez que a aba é acessada
+      fetchLocation()
+    })
+
+    return unsubscribe // Limpeza do listener ao desmontar o componente
+  }, [navigation])
 
   useEffect(() => {
     if (locationActual && locationActual.address) {
       setInputValue(locationActual.address)
     }
-  }, [locationActual])
+  }, [locationActual, navigation])
 
   const handleInputChange = (name, value) => {
     setInputValue(value)
@@ -210,7 +215,7 @@ export default function HomeScreen() {
                 >
                   <Image
                     source={{
-                      uri: `http://192.168.1.4:3000/public/service/images/${service.images[0]}`,
+                      uri: `${service.images[0]}`,
                     }}
                     style={styles.image}
                   />
@@ -257,7 +262,7 @@ export default function HomeScreen() {
                   >
                     <Image
                       source={{
-                        uri: `http://192.168.1.4:3000/public/service/images/${service.images[0]}`,
+                        uri: `${service.images[0]}`,
                       }}
                       style={styles.image}
                     />
