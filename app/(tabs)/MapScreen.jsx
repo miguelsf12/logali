@@ -5,11 +5,13 @@ import { useEffect, useState } from "react"
 import { FontAwesome } from "@expo/vector-icons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { sendActualLocation } from "../../services/clientService"
+import { useNavigation } from "@react-navigation/native"
 
 export default function MapScreen() {
   const [inputValue, setInputValue] = useState(null)
   const [token, setToken] = useState(null)
   const [locationActual, setLocationActual] = useState({})
+  const navigation = useNavigation()
   const [address, setAddress] = useState({
     address: "",
   })
@@ -31,14 +33,19 @@ export default function MapScreen() {
       }
     }
 
-    fetchLocation()
-  }, [])
+    const unsubscribe = navigation.addListener("focus", () => {
+      // Executa fetchLocation toda vez que a aba é acessada
+      fetchLocation()
+    })
+
+    return unsubscribe
+  }, [navigation])
 
   useEffect(() => {
     if (locationActual && locationActual.address) {
       setInputValue(locationActual.address)
     }
-  }, [locationActual])
+  }, [locationActual, navigation])
 
   const handleInputChange = (name, value) => {
     setInputValue(value)
