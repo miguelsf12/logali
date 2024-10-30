@@ -13,6 +13,7 @@ export default function InputOutlined({
     <View style={styles.container}>
       <View style={styles.inputWrapper}>
         <TextInput
+          autoFocus={false}
           placeholder={placeholder}
           style={styles.textInput}
           value={value}
