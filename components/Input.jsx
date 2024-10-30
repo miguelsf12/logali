@@ -20,6 +20,7 @@ export default function Input({
         }}
       >
         <TextInput
+          autoFocus={false}
           placeholder={placeholder}
           style={{
             flex: 1,
