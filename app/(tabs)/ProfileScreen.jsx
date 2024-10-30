@@ -2,13 +2,23 @@ import React, { useEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
 import { StyleSheet, View, Text, Image, Pressable, ScrollView } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { getUserProfile } from "../../services/clientService"
-import { getMyService } from "../../services/serviceService"
+import { editUser, getUserProfile } from "../../services/clientService"
+import InputTransparent from "../../components/InputTransparent"
+import * as ImagePicker from "expo-image-picker"
+import { TouchableOpacity } from "react-native"
+import { router } from "expo-router"
+import { FontAwesome } from "@expo/vector-icons"
 
 const ProfileScreen = () => {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    address: "",
+  })
   const [token, setToken] = useState(null)
   const [userOn, setUserOn] = useState({})
-  const [myService, setMyService] = useState({})
+  const [isEditing, setIsEditing] = useState(false)
+  const [image, setImage] = useState(null)
   const navigation = useNavigation()
 
   useEffect(() => {
@@ -20,9 +30,6 @@ const ProfileScreen = () => {
         if (!token) {
           navigation.navigate("LoginScreen")
         }
-
-        const myService = await getMyService(token)
-        setMyService(myService)
 
         const user = await getUserProfile(token)
         setUserOn(user)
@@ -36,67 +43,169 @@ const ProfileScreen = () => {
     checkToken()
   }, [token, navigation])
 
+  const handleEdit = () => {
+    setForm({
+      name: "",
+      email: "",
+      address: "",
+    })
+    setIsEditing(true)
+  }
+
+  const handleCancel = () => {
+    setForm({
+      name: userOn.name,
+      email: userOn.email,
+      address: userOn.address,
+    })
+    setIsEditing(false)
+    setImage(null)
+  }
+
+  const handleInputChange = (name, value) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }))
+  }
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsMultipleSelection: false,
+      base64: false,
+      quality: 1,
+    })
+
+    if (!result.canceled) {
+      setImage(result.assets[0])
+    }
+  }
+
+  const onSubmit = async () => {
+    try {
+      const formData = new FormData()
+
+      // Adiciona os dados do serviço ao formData
+      formData.append("name", form.name)
+      formData.append("email", form.email)
+      formData.append("address", form.address)
+
+      // Adiciona as imagens ao formData
+      if (image) {
+        formData.append("image", {
+          uri: image.uri,
+          type: image.mimeType || "image/jpeg",
+          name: image.fileName || "profile.jpg",
+        })
+      }
+
+      const response = await editUser(formData, userOn._id, token)
+      console.log(response)
+
+      if (!response.status) {
+        alert(response.message)
+        const updatedUser = await getUserProfile(token)
+        setUserOn(updatedUser)
+        setIsEditing(false)
+        router.replace("ProfileScreen")
+      }
+    } catch (error) {
+      console.error(error)
+      alert("Erro ao atualizar as informações.")
+    }
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Profile Picture */}
-        <Image
-          source={{ uri: "https://via.placeholder.com/150" }} // Substitua pela URL da imagem
-          style={styles.profileImage}
-        />
-        {userOn.name ? (
+        <TouchableOpacity
+          style={styles.imageContainer}
+          onPress={isEditing ? pickImage : null}
+        >
+          <Image
+            source={{
+              uri: image && image.uri ? image.uri : userOn.image || undefined,
+            }}
+            style={styles.profileImage}
+          />
+
+          {isEditing && (
+            <View style={styles.iconOverlay}>
+              <FontAwesome name="pencil" size={24} color="rgba(0, 0, 0, 0.6)" />
+            </View>
+          )}
+        </TouchableOpacity>
+
+        {isEditing ? (
+          <InputTransparent
+            placeholder={userOn.name}
+            onChange={handleInputChange}
+            name="name"
+            value={form.name}
+            style={styles.name}
+          />
+        ) : userOn.name ? (
           <Text style={styles.name}>{userOn.name}</Text>
         ) : (
           <Text style={styles.name}>Carregando nome</Text>
         )}
 
-        {userOn.address ? (
+        {isEditing ? (
+          <InputTransparent
+            placeholder={userOn.email}
+            onChange={handleInputChange}
+            name="email"
+            value={form.email}
+            style={styles.email}
+          />
+        ) : userOn.email ? (
+          <Text style={styles.email}>{userOn.email}</Text>
+        ) : (
+          <Text style={styles.email}>Carregando email</Text>
+        )}
+
+        {isEditing ? (
+          <InputTransparent
+            placeholder="Altere a localização"
+            onChange={handleInputChange}
+            name="address"
+            value={form.address}
+            style={styles.location}
+          />
+        ) : userOn.address ? (
           <Text style={styles.location}>{userOn.address["address"]}</Text>
         ) : (
           <Text style={styles.location}>Carregando localização</Text>
         )}
-        <Pressable style={styles.editButton}>
-          <Text style={styles.editButtonText}>Edit</Text>
-        </Pressable>
+
+        {isEditing ? (
+          <>
+            <TouchableOpacity style={styles.editButton} onPress={onSubmit}>
+              <Text style={styles.editButtonText}>Save</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.editButton} onPress={handleCancel}>
+              <Text style={styles.editButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <Pressable style={styles.editButton} onPress={handleEdit}>
+            <Text style={styles.editButtonText}>Edit</Text>
+          </Pressable>
+        )}
 
         {/* About Section */}
         <Text style={styles.sectionTitle}>Sobre mim</Text>
         <View style={styles.aboutContainer}>
-          <View style={styles.aboutItem}>
+          {/* <View style={styles.aboutItem}>
             <Text style={styles.aboutItemTitle}>Meu serviço</Text>
-            {/* <Text style={styles.aboutItemSubtitle}>{myService.name}</Text> */}
-          </View>
+            
+          </View> */}
           <View style={styles.aboutItem}>
             <Text style={styles.aboutItemTitle}>Serviços Favoritos (IMPLEMENTAR)</Text>
             <Text style={styles.aboutItemSubtitle}>500+ connections</Text>
           </View>
         </View>
-
-        {/* Recently Contracted Services */}
-        {/* <Text style={styles.sectionTitle}>Recently Contracted Services</Text>
-        <View style={styles.servicesContainer}>
-          <View style={styles.serviceItem}>
-            <Text style={styles.serviceDescription}>Get introduced to Robert...</Text>
-            <Text style={styles.serviceNote}>He accepts most intros</Text>
-            <Pressable style={styles.serviceButton}>
-              <Text style={styles.serviceButtonText}>Ask for intro</Text>
-            </Pressable>
-          </View>
-          <View style={styles.serviceItem}>
-            <Text style={styles.serviceDescription}>Get feedback on your startup...</Text>
-            <Text style={styles.serviceNote}>Pitching, Fundraising</Text>
-            <Pressable style={styles.serviceButton}>
-              <Text style={styles.serviceButtonText}>Book now</Text>
-            </Pressable>
-          </View>
-          <View style={styles.serviceItem}>
-            <Text style={styles.serviceDescription}>Get help with investor updates</Text>
-            <Text style={styles.serviceNote}>Fundraising, Startups</Text>
-            <Pressable style={styles.serviceButton}>
-              <Text style={styles.serviceButtonText}>Book now</Text>
-            </Pressable>
-          </View>
-        </View> */}
       </ScrollView>
     </View>
   )
@@ -109,15 +218,33 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 60,
   },
+  imageContainer: {
+    alignSelf: "center",
+    position: "relative",
+  },
   profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     alignSelf: "center",
     marginBottom: 16,
   },
+  iconOverlay: {
+    position: "absolute",
+    bottom: 14,
+    right: 0,
+    borderRadius: 15,
+    padding: 4,
+  },
   name: {
     fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  email: {
+    fontSize: 16,
+    paddingTop: 16,
     fontWeight: "bold",
     textAlign: "center",
   },
