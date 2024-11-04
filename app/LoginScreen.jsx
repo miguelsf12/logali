@@ -96,6 +96,10 @@ const LoginScreen = () => {
     router.replace("/(tabs)/HomeScreen")
   }
 
+  const toChangePassword = () => {
+    router.push("/ChangePassword")
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -151,6 +155,11 @@ const LoginScreen = () => {
         {error.password && (
           <Text style={{ color: "red", paddingHorizontal: 16 }}>{error.password}</Text>
         )}
+        <TouchableOpacity onPress={toChangePassword}>
+          <Text style={{ color: "#607AFB", paddingHorizontal: 16 }}>
+            Esqueci minha senha
+          </Text>
+        </TouchableOpacity>
 
         {/* Sign Up Button */}
         <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
