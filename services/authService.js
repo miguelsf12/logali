@@ -11,3 +11,7 @@ export const register = async (formData) => {
 export const check_auth = async (token) => {
   return await api.get("/user/auth/check-auth")
 }
+
+export const changePassword = async (form) => {
+  return await api.patch("/user/auth/change-password", form)
+}
