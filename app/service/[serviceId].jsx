@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef, useCallback } from "react"
 import {
   View,
   Text,
@@ -8,11 +8,13 @@ import {
   ScrollView,
   Platform,
   Linking,
-  Modal, // Importando Modal
 } from "react-native"
 import { FontAwesome } from "@expo/vector-icons"
-import { useLocalSearchParams } from "expo-router"
+import { router, useLocalSearchParams } from "expo-router"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet"
+import { GestureHandlerRootView } from "react-native-gesture-handler"
+
 import { getRoutesToService, getServiceById } from "../../services/serviceService"
 import Map from "../../components/Map"
 
@@ -21,7 +23,7 @@ const ServiceDetailScreen = () => {
   const [service, setService] = useState(null)
   const [token, setToken] = useState(null)
   const [routePoints, setRoutePoints] = useState(null)
-  const [isModalVisible, setIsModalVisible] = useState(false) // Estado para controlar a visibilidade do modal
+  const bottomSheetRef = useRef(null)
 
   useEffect(() => {
     const fetchService = async () => {
@@ -62,101 +64,78 @@ const ServiceDetailScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>{service.name}</Text>
-        <Text style={styles.description}>{service.description}</Text>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.imageScrollContainer}
-        >
-          {service &&
-            service.images &&
-            service.images.map((imagePath, index) => (
-              <View key={index} style={styles.imageWrapper}>
-                <Image
-                  source={{
-                    uri: `${imagePath}`,
-                  }}
-                  style={styles.image}
-                />
-              </View>
-            ))}
-        </ScrollView>
-
-        <View style={styles.detail}>
-          <Text style={styles.detailTitle}>Localização</Text>
-          <TouchableOpacity
-            onPress={() =>
-              openMap(
-                service.location.coordinates[0],
-                service.location.coordinates[1],
-                service.location.address
-              )
-            }
-          >
-            <Text style={styles.detailValue}>
-              {service.location.address}
-              {"    "}
-              <FontAwesome name="location-arrow" size={24} color="#7d7d7d" />
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Botão VER ROTA acima da Categoria */}
-        <View style={styles.detail}>
-          <TouchableOpacity
-            style={styles.routeButton}
-            onPress={() => setIsModalVisible(true)} // Abre o modal quando clicado
-          >
-            <Text style={styles.routeButtonText}>VER ROTA</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.detail}>
-          <Text style={styles.detailTitle}>Categoria</Text>
-          <Text style={styles.detailValue}>{service.category}</Text>
-        </View>
-
-        <View style={styles.detail}>
-          <Text style={styles.detailTitle}>Provedor</Text>
-          <Text style={styles.detailValue}>{service.provider.name}</Text>
-        </View>
-      </ScrollView>
-
-      {/* Modal que contém o mapa */}
-      <Modal
-        visible={isModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setIsModalVisible(false)} // Fecha o modal ao clicar fora ou pressionar 'voltar'
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            {/* Mapa exibido no modal */}
-            {routePoints && <Map overview_polyline={routePoints} />}
-
-            {/* Botão para fechar o modal */}
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setIsModalVisible(false)}
+    <GestureHandlerRootView style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <FontAwesome name="arrow-left" size={24} color="black" />
+      </TouchableOpacity>
+      <Map style={styles.map} overview_polyline={routePoints} />
+      <BottomSheet ref={bottomSheetRef} index={1} snapPoints={["80%", "40%"]}>
+        <BottomSheetView style={styles.contentContainer}>
+          <View style={styles.sheetContent}>
+            <Text style={styles.title}>{service.name}</Text>
+            <Text style={styles.description}>{service.description}</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.imageScrollContainer}
             >
-              <Text style={styles.closeButtonText}>Fechar</Text>
-            </TouchableOpacity>
+              {service.images?.map((imagePath, index) => (
+                <View key={index} style={styles.imageWrapper}>
+                  <Image source={{ uri: imagePath }} style={styles.image} />
+                </View>
+              ))}
+            </ScrollView>
+            <View style={styles.detail}>
+              <Text style={styles.detailTitle}>Localização</Text>
+              <TouchableOpacity
+                onPress={() =>
+                  openMap(
+                    service.location.coordinates[0],
+                    service.location.coordinates[1],
+                    service.location.address
+                  )
+                }
+              >
+                <Text style={styles.detailValue}>
+                  {service.location.address}
+                  {"    "}
+                  <FontAwesome name="location-arrow" size={24} color="#7d7d7d" />
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.detail}>
+              <Text style={styles.detailTitle}>Categoria</Text>
+              <Text style={styles.detailValue}>{service.category}</Text>
+            </View>
+            <View style={styles.detail}>
+              <Text style={styles.detailTitle}>Provedor</Text>
+              <Text style={styles.detailValue}>{service.provider.name}</Text>
+            </View>
           </View>
-        </View>
-      </Modal>
-    </View>
+        </BottomSheetView>
+      </BottomSheet>
+    </GestureHandlerRootView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 80,
     backgroundColor: "#f1f5f9",
+    alignItems: "center",
+    height: "100%",
+  },
+  backButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    zIndex: 10,
+    padding: 10,
+    borderRadius: 20,
+  },
+  map: {
+    height: "100%",
+    width: "100%",
   },
   title: {
     color: "#0d141c",
@@ -196,42 +175,6 @@ const styles = StyleSheet.create({
   detailValue: {
     fontSize: 14,
     color: "#49719c",
-  },
-  routeButton: {
-    backgroundColor: "#49719c",
-    padding: 10,
-    borderRadius: 5,
-    alignItems: "center",
-  },
-  routeButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fundo semitransparente
-  },
-  modalContent: {
-    padding: 20,
-    borderRadius: 10,
-    top: "53%",
-    width: "100%",
-    height: "100%", // Definindo altura para caber o mapa
-  },
-  closeButton: {
-    backgroundColor: "#49719c",
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 20,
-    alignItems: "center",
-  },
-  closeButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 })
 
