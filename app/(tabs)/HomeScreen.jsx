@@ -165,6 +165,7 @@ export default function HomeScreen() {
           <Image source={homeImage} style={styles.heroImage} />
           <View style={styles.heroSection}>
             <Input
+              style={{ backgroundColor: "#EEEFF2" }}
               name="address"
               onChange={handleInputChange}
               value={inputValue}
