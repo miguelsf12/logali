@@ -14,9 +14,9 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="MapScreen"
+        name="ServicesScreen"
         options={{
-          title: "Mapa",
+          title: "Serviços",
           tabBarIcon: ({ color }) => <FontAwesome size={28} name="map" color={color} />,
         }}
       />
