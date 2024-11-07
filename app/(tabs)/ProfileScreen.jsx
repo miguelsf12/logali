@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
-import { StyleSheet, View, Text, Image, Pressable, ScrollView } from "react-native"
+import { StyleSheet, View, Text, Image, Pressable, ScrollView, Alert } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { editUser, getUserProfile } from "../../services/clientService"
 import InputTransparent from "../../components/InputTransparent"
 import * as ImagePicker from "expo-image-picker"
 import { TouchableOpacity } from "react-native"
 import { router } from "expo-router"
-import { FontAwesome } from "@expo/vector-icons"
+import { FontAwesome, Ionicons } from "@expo/vector-icons"
 
 const ProfileScreen = () => {
   const [form, setForm] = useState({
@@ -50,6 +50,18 @@ const ProfileScreen = () => {
       address: "",
     })
     setIsEditing(true)
+  }
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("authToken")
+
+      router.replace("/LoginScreen")
+      Alert.alert("Você foi desconectado com sucesso.")
+    } catch (error) {
+      console.error("Erro ao realizar logout:", error)
+      Alert.alert("Erro", "Não foi possível realizar o logout.")
+    }
   }
 
   const handleCancel = () => {
@@ -118,6 +130,16 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={handleLogout}>
+        <Ionicons name="exit-outline" size={32} color="black" />
+        <Text
+          style={{
+            fontSize: 18,
+          }}
+        >
+          Sair
+        </Text>
+      </TouchableOpacity>
       <ScrollView showsVerticalScrollIndicator={false}>
         <TouchableOpacity
           style={styles.imageContainer}
@@ -217,6 +239,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 16,
     paddingTop: 60,
+  },
+  backButton: {
+    position: "absolute",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    top: 40,
+    left: 20,
+    zIndex: 10,
+    padding: 10,
+    borderRadius: 20,
   },
   imageContainer: {
     alignSelf: "center",
