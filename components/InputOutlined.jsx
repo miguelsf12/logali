@@ -8,6 +8,7 @@ export default function InputOutlined({
   value,
   icon,
   editable,
+  style,
 }) {
   return (
     <View style={styles.container}>
@@ -15,7 +16,7 @@ export default function InputOutlined({
         <TextInput
           autoFocus={false}
           placeholder={placeholder}
-          style={styles.textInput}
+          style={[style, styles.textInput]}
           value={value}
           onChangeText={(text) => onChange(name, text)}
           editable={editable}

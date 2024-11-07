@@ -8,16 +8,19 @@ export default function Input({
   onSubmit,
   icon,
   secureTextEntry,
+  style,
 }) {
   return (
     <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
       <View
-        style={{
-          flexDirection: "row",
-          backgroundColor: "#EEEFF2",
-          borderRadius: 16,
-          alignItems: "center",
-        }}
+        style={[
+          {
+            flexDirection: "row",
+            borderRadius: 16,
+            alignItems: "center",
+          },
+          style,
+        ]}
       >
         <TextInput
           autoFocus={false}
@@ -28,6 +31,7 @@ export default function Input({
             fontSize: 16,
             color: "#1C1D22",
             borderTopLeftRadius: 16,
+
             borderBottomLeftRadius: 16,
           }}
           secureTextEntry={secureTextEntry}
@@ -36,12 +40,15 @@ export default function Input({
           onSubmit={onSubmit}
         />
         <View
-          style={{
-            paddingHorizontal: 16,
-            backgroundColor: "#EEEFF2",
-            borderTopRightRadius: 16,
-            borderBottomRightRadius: 16,
-          }}
+          style={[
+            {
+              paddingHorizontal: 16,
+              // backgroundColor: "#EEEFF2",
+              borderTopRightRadius: 16,
+              borderBottomRightRadius: 16,
+            },
+            style,
+          ]}
         >
           {/* Envelope Icon */}
           {icon ? icon : ""}
