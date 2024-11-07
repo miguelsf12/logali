@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Image,
   Switch,
+  Alert,
 } from "react-native"
 import { AntDesign, FontAwesome, FontAwesome6 } from "@expo/vector-icons"
 import categories from "../../logali/category.json"
@@ -84,12 +85,12 @@ const AddServiceScreen = () => {
       // console.log(response)
 
       if (!response.status) {
-        alert("Serviço adicionado com sucesso!")
+        Alert.alert("Serviço adicionado com sucesso!")
         router.replace("OwnerServiceScreen")
       }
     } catch (error) {
       console.error(error)
-      alert("Erro ao adicionar o serviço.")
+      Alert.alert("Erro ao adicionar o serviço.")
     }
   }
 

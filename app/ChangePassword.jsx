@@ -1,11 +1,8 @@
 import React, { useState } from "react"
-import { View, Text, TouchableOpacity } from "react-native"
+import { View, Text, TouchableOpacity, Alert } from "react-native"
 import Input from "../components/Input"
 import { AntDesign, Ionicons } from "@expo/vector-icons"
 import { changePassword } from "../services/authService"
-import ShowSuccess from "../components/ShowSucess"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import { useNavigation } from "@react-navigation/native"
 import { useRouter } from "expo-router"
 
 const ChangePassword = () => {
@@ -21,14 +18,11 @@ const ChangePassword = () => {
   })
 
   const formatCPF = (cpf) => {
-    // Remove tudo que não for número
     cpf = cpf.replace(/\D/g, "")
 
     if (cpf.length > 11) {
       cpf = cpf.substring(0, 11)
     }
-
-    // Adiciona a formatação: XXX.XXX.XXX-XX
     if (cpf.length <= 11) {
       cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
       cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
@@ -53,7 +47,6 @@ const ChangePassword = () => {
     setError({})
     const response = await changePassword(form)
     setData(response)
-    // console.log(response)
     console.log(JSON.stringify(response, null, 2))
 
     if (response.status === "400") {
@@ -76,10 +69,9 @@ const ChangePassword = () => {
         setError({ coincident: "As senhas não coincidem" })
       }
     } else {
-      alert(response.message)
+      Alert.alert(response.message)
       router.replace("LoginScreen")
     }
-    console.log(error)
   }
 
   return (
@@ -88,7 +80,6 @@ const ChangePassword = () => {
       <Input
         name="cpf"
         value={form.cpf}
-        // placeholder={"CPF"}
         onChange={(name, value) => handleInputChange("cpf", value)}
         icon={<AntDesign name="idcard" size={24} color="#7D7D7D" />}
       />
@@ -102,9 +93,8 @@ const ChangePassword = () => {
       <Input
         name="password"
         value={form.password}
-        // placeholder={"Senha"}
         onChange={(name, value) => handleInputChange("password", value)}
-        secureTextEntry={!showPassword} // Oculta a senha se showPassword for false
+        secureTextEntry={!showPassword}
         icon={
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
             <Ionicons name={showPassword ? "eye" : "eye-off"} size={24} color="#607AFB" />
@@ -121,9 +111,8 @@ const ChangePassword = () => {
       <Input
         name="passwordConfirm"
         value={form.passwordConfirm}
-        // placeholder={"Senha"}
         onChange={(name, value) => handleInputChange("passwordConfirm", value)}
-        secureTextEntry={!showPassword} // Oculta a senha se showPassword for false
+        secureTextEntry={!showPassword}
         icon={
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
             <Ionicons name={showPassword ? "eye" : "eye-off"} size={24} color="#607AFB" />
