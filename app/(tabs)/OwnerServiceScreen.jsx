@@ -186,15 +186,15 @@ export default function OwnerServiceScreen() {
             {isEditing ? (
               <>
                 <TouchableOpacity onPress={onSubmit}>
-                  <Text style={styles.saveText}>Save</Text>
+                  <Text style={styles.saveText}>Salvar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleCancel}>
-                  <Text style={styles.cancelText}>Cancel</Text>
+                  <Text style={styles.cancelText}>Cancelar</Text>
                 </TouchableOpacity>
               </>
             ) : (
               <TouchableOpacity onPress={handleEdit}>
-                <Text style={styles.editText}>Edit</Text>
+                <Text style={styles.editText}>Editar</Text>
               </TouchableOpacity>
             )}
           </View>

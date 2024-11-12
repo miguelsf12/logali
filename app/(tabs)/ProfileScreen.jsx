@@ -204,15 +204,15 @@ const ProfileScreen = () => {
         {isEditing ? (
           <>
             <TouchableOpacity style={styles.editButton} onPress={onSubmit}>
-              <Text style={styles.editButtonText}>Save</Text>
+              <Text style={styles.editButtonText}>Salvar</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.editButton} onPress={handleCancel}>
-              <Text style={styles.editButtonText}>Cancel</Text>
+              <Text style={styles.editButtonText}>Cancelar</Text>
             </TouchableOpacity>
           </>
         ) : (
           <Pressable style={styles.editButton} onPress={handleEdit}>
-            <Text style={styles.editButtonText}>Edit</Text>
+            <Text style={styles.editButtonText}>Editar</Text>
           </Pressable>
         )}
 
