@@ -8,5 +8,5 @@ export const editUser = async (formData, id, token) => {
   return await api.patch(`/user/client/edit/${id}`, formData, token)
 }
 export const sendActualLocation = async (address, token) => {
-  return await api.post("/user/client/send-actual-location", { address }, token)
+  return await api.post("/user/client/send-actual-location", address, token)
 }
