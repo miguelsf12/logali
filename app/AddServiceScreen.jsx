@@ -13,7 +13,7 @@ import {
   Alert,
 } from "react-native"
 import { AntDesign, FontAwesome, FontAwesome6 } from "@expo/vector-icons"
-import categories from "../../logali/category.json"
+import categories from "../category.json"
 import InputOutlined from "../components/InputOutlined"
 import * as ImagePicker from "expo-image-picker"
 import { addservice } from "../services/providerService"
@@ -98,6 +98,9 @@ const AddServiceScreen = () => {
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.replace("HomeScreen")}>
+            <FontAwesome name="arrow-left" size={24} color="black" />
+          </TouchableOpacity>
           <Text style={styles.headerTitle}>Criar serviço</Text>
         </View>
         {/* Service Name Input */}
