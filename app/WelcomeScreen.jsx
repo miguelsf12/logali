@@ -1,14 +1,10 @@
-import React, { useEffect } from "react"
-import { View, Text, ImageBackground, StyleSheet, TouchableOpacity } from "react-native"
+import React from "react"
+import { View, Text, ImageBackground, StyleSheet } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
-import { useRouter } from "expo-router"
 import Button from "../components/Button"
 import background from "../assets/images/background.jpeg"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default function WelcomeScreen() {
-  const router = useRouter()
-
   return (
     <View style={styles.container}>
       <ImageBackground
