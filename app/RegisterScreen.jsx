@@ -96,7 +96,7 @@ const RegisterScreen = () => {
     const response = await register(form)
     setData(response)
 
-    if (response.status === "400") {
+    if (response.status === 400) {
       const errorField = response.message.match(/Invalid param: (\w+)/)
       const errorFieldMissing = response.message.match(/Missing param: (\w+)/)
 

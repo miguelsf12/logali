@@ -49,7 +49,7 @@ const ChangePassword = () => {
     setData(response)
     console.log(JSON.stringify(response, null, 2))
 
-    if (response.status === "400") {
+    if (response.status === 400) {
       const errorField = response.message.match(/Invalid param: (\w+)/)
       const errorFieldMissing = response.message.match(/Missing param: (\w+)/)
 
