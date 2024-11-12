@@ -1,21 +1,28 @@
 {
   "cli": {
-    "version": ">= 12.6.2",
+    "version": ">= 13.1.1",
     "appVersionSource": "remote"
   },
   "build": {
     "development": {
       "developmentClient": true,
+      "env": {
+        "NODE_ENV": "development"
+      },
       "distribution": "internal"
     },
     "preview": {
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "NODE_ENV": "production"
+      }
     }
   },
   "submit": {
     "production": {}
   }
 }
+
