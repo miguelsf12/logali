@@ -14,11 +14,7 @@ import Input from "../../components/Input"
 import homeImage from "../../assets/images/home-image.jpeg"
 import { FontAwesome } from "@expo/vector-icons"
 import { getUserProfile, sendActualLocation } from "../../services/clientService"
-import {
-  getAllServices,
-  getMyService,
-  getServicesFiltered,
-} from "../../services/serviceService"
+import { getAllServices, getServicesFiltered } from "../../services/serviceService"
 import Slider from "@react-native-community/slider"
 import { router } from "expo-router"
 import { debounce } from "lodash"
@@ -46,7 +42,7 @@ export default function HomeScreen() {
   const [inputValue, setInputValue] = useState(address.address)
 
   useEffect(() => {
-    const checkToken = async () => {
+    const fetchAllService = async () => {
       try {
         const token = await AsyncStorage.getItem("authToken")
         setToken(token)
@@ -68,7 +64,7 @@ export default function HomeScreen() {
       }
     }
 
-    checkToken()
+    fetchAllService()
   }, [token, navigation])
 
   useEffect(() => {
@@ -165,6 +161,7 @@ export default function HomeScreen() {
           <Image source={homeImage} style={styles.heroImage} />
           <View style={styles.heroSection}>
             <Input
+              placeholder="Insira sua localização"
               style={{ backgroundColor: "#EEEFF2" }}
               name="address"
               onChange={handleInputChange}
