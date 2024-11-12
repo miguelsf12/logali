@@ -113,6 +113,7 @@ export default function MapScreen() {
       <Map style={styles.map} />
       <View style={styles.inputContainer}>
         <Input
+          placeholder="Insira sua localização"
           style={styles.inputLoc}
           name="address"
           onChange={handleInputChange}
