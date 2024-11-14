@@ -19,7 +19,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "transparent"
+        "backgroundColor": "#ffffff"
       },
       "package": "logali.android"
     },
@@ -28,9 +28,7 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router"
-    ],
+    "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true
     },
@@ -41,6 +39,8 @@
       "eas": {
         "projectId": "911ee544-3c46-49fd-a80b-7945e70c5eb9"
       }
-    }
+    },
+    "newArchEnabled": true
   }
 }
+

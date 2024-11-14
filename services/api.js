@@ -1,4 +1,4 @@
-const BASE_URL = "http://192.168.1.4:3000" // IP PODE VARIAR
+const BASE_URL = "https://logali-2fd5279f9843.herokuapp.com" // IP PODE VARIAR
 
 const api = {
   get: async (path, token) => {
