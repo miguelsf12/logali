@@ -23,9 +23,9 @@ export default function WelcomeScreen() {
         />
         <Text style={styles.title}>A sua solução está Logali!</Text>
         <View style={styles.authContainer}>
-          {/* <Button text={"LOGIN"} href={"/LoginScreen"} /> */}
-          {/* <Button text={"REGISTER"} href={"/RegisterScreen"} /> */}
-          <TouchableOpacity
+          <Button text={"LOGIN"} href={"/LoginScreen"} />
+          <Button text={"REGISTER"} href={"/RegisterScreen"} />
+          {/* <TouchableOpacity
             style={{
               backgroundColor: "#607AFB",
               borderRadius: 16,
@@ -50,7 +50,8 @@ export default function WelcomeScreen() {
             <Text style={{ color: "#F9FAFA", fontWeight: "bold", fontSize: 16 }}>
               Registrar
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+
         </View>
       </ImageBackground>
     </View>
