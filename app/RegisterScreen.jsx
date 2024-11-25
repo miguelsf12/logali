@@ -12,9 +12,7 @@ import Input from "../components/Input"
 import Ionicons from "@expo/vector-icons/Ionicons"
 import Entypo from "@expo/vector-icons/Entypo"
 import AntDesign from "@expo/vector-icons/AntDesign"
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5"
 import { register } from "../services/authService"
-import { useNavigation } from "@react-navigation/native"
 import ShowSuccess from "../components/ShowSucess"
 import * as Location from "expo-location"
 import { sendActualLocation } from "../services/clientService"
@@ -61,7 +59,6 @@ const RegisterScreen = () => {
     text = JSON.stringify(locationExpo)
   }
 
-  const navigation = useNavigation()
   const router = useRouter()
 
   const formatCPF = (cpf) => {
