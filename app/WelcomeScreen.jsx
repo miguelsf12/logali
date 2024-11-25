@@ -1,10 +1,13 @@
 import React from "react"
-import { View, Text, ImageBackground, StyleSheet } from "react-native"
+import { View, Text, ImageBackground, StyleSheet, TouchableOpacity } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import Button from "../components/Button"
 import background from "../assets/images/background.jpeg"
+import { useRouter } from "expo-router"
 
 export default function WelcomeScreen() {
+  const router = useRouter()
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -20,8 +23,34 @@ export default function WelcomeScreen() {
         />
         <Text style={styles.title}>A sua solução está Logali!</Text>
         <View style={styles.authContainer}>
-          <Button text={"LOGIN"} href={"/LoginScreen"} />
-          <Button text={"REGISTER"} href={"/RegisterScreen"} />
+          {/* <Button text={"LOGIN"} href={"/LoginScreen"} /> */}
+          {/* <Button text={"REGISTER"} href={"/RegisterScreen"} /> */}
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#607AFB",
+              borderRadius: 16,
+              paddingVertical: 12,
+              alignItems: "center",
+            }}
+            onPress={() => router.push("LoginScreen")}
+          >
+            <Text style={{ color: "#F9FAFA", fontWeight: "bold", fontSize: 16 }}>
+              Login
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#607AFB",
+              borderRadius: 16,
+              paddingVertical: 12,
+              alignItems: "center",
+            }}
+            onPress={() => router.push("RegisterScreen")}
+          >
+            <Text style={{ color: "#F9FAFA", fontWeight: "bold", fontSize: 16 }}>
+              Registrar
+            </Text>
+          </TouchableOpacity>
         </View>
       </ImageBackground>
     </View>

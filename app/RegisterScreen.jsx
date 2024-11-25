@@ -18,6 +18,7 @@ import { useNavigation } from "@react-navigation/native"
 import ShowSuccess from "../components/ShowSucess"
 import * as Location from "expo-location"
 import { sendActualLocation } from "../services/clientService"
+import { useRouter } from "expo-router"
 
 const RegisterScreen = () => {
   const [data, setData] = useState({})
@@ -61,6 +62,7 @@ const RegisterScreen = () => {
   }
 
   const navigation = useNavigation()
+  const router = useRouter()
 
   const formatCPF = (cpf) => {
     // Remove tudo que não for número
@@ -119,7 +121,8 @@ const RegisterScreen = () => {
   }
 
   const handleAnimationFinish = () => {
-    navigation.navigate("LoginScreen")
+    // navigation.navigate("LoginScreen")
+    router.replace("LoginScreen")
   }
 
   return (

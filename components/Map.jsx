@@ -27,9 +27,6 @@ export default function Map({ overview_polyline, style }) {
             latitude: point[0],
             longitude: point[1],
           }))
-
-          // console.log(routeCoords)
-
           setRouteCoordinates(routeCoords)
         } catch (error) {
           console.error("Erro ao decodificar polyline:", error)
@@ -39,65 +36,50 @@ export default function Map({ overview_polyline, style }) {
 
     fetchLocation()
     fetchRoute()
-  }, [location])
+  }, [overview_polyline]) // A dependência aqui deve ser apenas `overview_polyline`, pois location só é carregado uma vez.
 
   const endPoint =
     routeCoordinates.length > 0 ? routeCoordinates[routeCoordinates.length - 1] : null
 
+  // Verifique se a localização foi carregada antes de renderizar o mapa
+  if (!location) {
+    return <Text>Carregando a localização...</Text>
+  }
+
   return (
     <View style={[style, styles.container]}>
-      {location ? (
-        <MapView
-          style={styles.map}
-          region={{
-            latitude: location.latitude,
-            longitude: location.longitude,
-            latitudeDelta: 0.05, // Ajuste para um zoom adequad
-            longitudeDelta: 0.05,
-          }}
-        >
-          <Marker
-            coordinate={{ latitude: location.latitude, longitude: location.longitude }}
-            title={location.address}
-            image={iconInit}
-          />
+      <MapView
+        style={styles.map}
+        region={{
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+        }}
+      >
+        <Marker
+          coordinate={{ latitude: location.latitude, longitude: location.longitude }}
+          title={location.address}
+          image={iconInit}
+        />
 
-          {/* Polyline mostrando o trajeto */}
-          {routeCoordinates.length > 0 && (
-            <>
-              <Polyline
-                coordinates={routeCoordinates}
-                strokeWidth={4}
-                strokeColor="blue" // Cor da linha da rota
-              />
-
-              {/* Marcador no ponto final da rota */}
-              {endPoint && (
-                <Marker coordinate={endPoint} title="Destino" image={iconFinish} />
-              )}
-            </>
-          )}
-        </MapView>
-      ) : (
-        <MapView
-          style={styles.map}
-          region={{
-            latitude: 0,
-            longitude: 0,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05,
-          }}
-        ></MapView>
-      )}
+        {/* Polyline mostrando o trajeto */}
+        {routeCoordinates.length > 0 && (
+          <>
+            <Polyline coordinates={routeCoordinates} strokeWidth={4} strokeColor="blue" />
+            {/* Marcador no ponto final da rota */}
+            {endPoint && (
+              <Marker coordinate={endPoint} title="Destino" image={iconFinish} />
+            )}
+          </>
+        )}
+      </MapView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    // height: "35%",
-    // height: 230,
-    // width: "90%",
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",

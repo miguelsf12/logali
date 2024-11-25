@@ -5,10 +5,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  ScrollView,
+  // ScrollView,
   Platform,
   Linking,
 } from "react-native"
+import { ScrollView } from "react-native-gesture-handler"
 import { FontAwesome } from "@expo/vector-icons"
 import { router, useLocalSearchParams } from "expo-router"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -68,8 +69,18 @@ const ServiceDetailScreen = () => {
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <FontAwesome name="arrow-left" size={24} color="black" />
       </TouchableOpacity>
-      <Map style={styles.map} overview_polyline={routePoints} />
-      <BottomSheet ref={bottomSheetRef} index={1} snapPoints={["80%", "40%"]}>
+      {routePoints === null ? (
+        <Text style={styles.description}>Carregando</Text>
+      ) : (
+        <Map style={styles.map} overview_polyline={routePoints} />
+      )}
+
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={1}
+        snapPoints={["80%", "40%"]}
+        enableOverScroll={true}
+      >
         <BottomSheetView style={styles.contentContainer}>
           <View style={styles.sheetContent}>
             <Text style={styles.title}>{service.name}</Text>
