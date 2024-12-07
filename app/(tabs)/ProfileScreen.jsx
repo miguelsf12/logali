@@ -34,7 +34,6 @@ const ProfileScreen = () => {
         const user = await getUserProfile(token)
         setUserOn(user)
 
-        console.log(JSON.stringify(user, null, 2))
       } catch (error) {
         console.error("Erro ao buscar usuário:", error)
       }
@@ -113,7 +112,6 @@ const ProfileScreen = () => {
       }
 
       const response = await editUser(formData, userOn._id, token)
-      console.log(response)
 
       if (!response.status) {
         alert(response.message)

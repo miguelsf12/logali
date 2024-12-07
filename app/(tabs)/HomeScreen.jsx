@@ -58,7 +58,6 @@ export default function HomeScreen() {
         const user = await getUserProfile(token)
         setUserOn(user)
 
-        console.log(JSON.stringify(user, null, 2))
       } catch (error) {
         console.error("Erro ao buscar usuário:", error)
       }
@@ -72,9 +71,7 @@ export default function HomeScreen() {
       setLoading(true)
       try {
         const filters = { radius }
-        console.log(radius)
         const response = await getServicesFiltered(filters, token)
-        console.log(response)
         setServicesAround(response)
       } catch (error) {
         console.error("Erro ao buscar serviços filtrados:", error)

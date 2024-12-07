@@ -102,7 +102,6 @@ export default function OwnerServiceScreen() {
 
       // Adiciona as imagens ao formData
       images.forEach((image, index) => {
-        console.log("Image URI: ", image.uri)
         formData.append(`images`, {
           uri: image.uri,
           type: image.mimeType,
@@ -111,7 +110,6 @@ export default function OwnerServiceScreen() {
       })
 
       const response = await editservice(formData, service._id, token)
-      console.log(response)
 
       if (!response.status) {
         alert(response.message)

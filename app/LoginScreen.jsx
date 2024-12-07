@@ -63,8 +63,6 @@ const LoginScreen = () => {
     setError({})
     const response = await login(form)
     setData(response)
-    // console.log(response)
-    console.log(JSON.stringify(response, null, 2))
 
     if (response.status === 400) {
       const errorField = response.message.match(/Invalid param: (\w+)/)
@@ -89,7 +87,6 @@ const LoginScreen = () => {
       setShowSuccess(true)
     }
 
-    console.log(error)
   }
 
   const handleAnimationFinish = () => {

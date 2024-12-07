@@ -36,6 +36,7 @@ const ServiceDetailScreen = () => {
 
         const routes = await getRoutesToService(serviceId, token)
         setRoutePoints(routes[0][0].overview_polyline.points)
+        
       } catch (error) {
         console.error("Erro ao buscar o serviço:", error)
       }

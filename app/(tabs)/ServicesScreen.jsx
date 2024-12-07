@@ -97,7 +97,6 @@ export default function MapScreen() {
       if (!response.status) {
         setLocationActual(response)
         await AsyncStorage.setItem("actualLocation", JSON.stringify(response))
-        console.log(response)
       }
     } catch (error) {
       console.error(error)

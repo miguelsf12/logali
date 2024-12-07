@@ -72,7 +72,6 @@ const AddServiceScreen = () => {
 
       // Adiciona as imagens ao formData
       images.forEach((image, index) => {
-        console.log("Image URI: ", image.uri)
         formData.append(`images`, {
           uri: image.uri,
           type: image.mimeType,
@@ -81,8 +80,6 @@ const AddServiceScreen = () => {
       })
 
       const response = await addservice(formData, token)
-      console.log(JSON.stringify(response, null, 2))
-      // console.log(response)
 
       if (!response.status) {
         Alert.alert("Serviço adicionado com sucesso!")

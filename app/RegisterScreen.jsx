@@ -49,7 +49,6 @@ const RegisterScreen = () => {
     let loc = await sendActualLocation({ address })
     setLocationActual(loc.address)
     setForm((prev) => ({ ...prev, address: loc.address }))
-    console.log(JSON.stringify(loc, null, 2))
   }
 
   let text = "Waiting..."
