@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import {
   View,
   Text,
@@ -23,9 +23,6 @@ const RegisterScreen = () => {
   const [data, setData] = useState({})
   const [error, setError] = useState({})
   const [showSuccess, setShowSuccess] = useState(false)
-  const [locationExpo, setLocationExpo] = useState(null)
-  const [locationActual, setLocationActual] = useState(null)
-  const [errorMsg, setErrorMsg] = useState(null)
   const [showPassword, setShowPassword] = useState(false)
   const [form, setForm] = useState({
     name: "",
@@ -38,7 +35,6 @@ const RegisterScreen = () => {
   const handleGetLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync()
     if (status !== "granted") {
-      setErrorMsg("Permission to access location was denied")
       return
     }
 
@@ -48,15 +44,7 @@ const RegisterScreen = () => {
     const address = `${coords[0]}, ${coords[1]}`
 
     let loc = await sendActualLocation({ address })
-    setLocationActual(loc.address)
     setForm((prev) => ({ ...prev, address: loc.address }))
-  }
-
-  let text = "Waiting..."
-  if (errorMsg) {
-    text = errorMsg
-  } else if (locationExpo) {
-    text = JSON.stringify(locationExpo)
   }
 
   const router = useRouter()
