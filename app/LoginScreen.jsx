@@ -14,6 +14,7 @@ import ShowSuccess from "../components/ShowSucess"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "@react-navigation/native"
 import { useRouter } from "expo-router"
+import imageHeader from '../assets/images/car-login-screen.jpeg'
 
 const LoginScreen = () => {
   const [data, setData] = useState({})
@@ -105,9 +106,7 @@ const LoginScreen = () => {
       <View style={{ flex: 1, backgroundColor: "#F9FAFA" }}>
         <View>
           <ImageBackground
-            source={{
-              uri: "https://cdn.usegalileo.ai/stability/f29c18e0-b114-4180-950a-2356672b72d6.png",
-            }}
+            source={imageHeader}
             style={{
               width: "100%",
               height: 300,

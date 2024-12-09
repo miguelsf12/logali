@@ -17,6 +17,7 @@ import ShowSuccess from "../components/ShowSucess"
 import * as Location from "expo-location"
 import { sendActualLocation } from "../services/clientService"
 import { useRouter } from "expo-router"
+import imageHeader from '../assets/images/car-register-screen.jpeg'
 
 const RegisterScreen = () => {
   const [data, setData] = useState({})
@@ -131,9 +132,7 @@ const RegisterScreen = () => {
           {/* Background Image */}
           <View>
             <ImageBackground
-              source={{
-                uri: "https://cdn.usegalileo.ai/stability/f29c18e0-b114-4180-950a-2356672b72d6.png",
-              }}
+              source={imageHeader}
               style={{
                 width: "100%",
                 height: 300,
