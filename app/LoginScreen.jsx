@@ -122,6 +122,7 @@ const LoginScreen = () => {
         </View>
 
         <Input
+          style={{ backgroundColor: "#D1D1D1" }}
           name="identifier"
           value={form.identifier}
           placeholder={"Email ou CPF"}
@@ -136,6 +137,7 @@ const LoginScreen = () => {
         )}
 
         <Input
+          style={{ backgroundColor: "#D1D1D1" }}
           name="password"
           value={form.password}
           placeholder={"Senha"}
