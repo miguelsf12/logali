@@ -7,6 +7,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native"
 import Input from "../components/Input"
 import Ionicons from "@expo/vector-icons/Ionicons"
@@ -22,6 +23,7 @@ import imageHeader from "../assets/images/car-register-screen.jpeg"
 const RegisterScreen = () => {
   const [data, setData] = useState({})
   const [error, setError] = useState({})
+  const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [form, setForm] = useState({
@@ -80,8 +82,10 @@ const RegisterScreen = () => {
 
   const onSubmit = async () => {
     setError({})
+    setLoading(true)
     const response = await register(form)
     setData(response)
+    setLoading(false)
 
     if (response.status === 400) {
       const errorField = response.message.match(/Invalid param: (\w+)/)
@@ -201,7 +205,7 @@ const RegisterScreen = () => {
             }
           />
           <Text style={{ color: "black", paddingHorizontal: 16 }}>
-            {`A senha deve ter um número e um caractere especial (ex.: *,.!@)`}
+            {`A senha deve ter maiúscula, minúscula um número e um caractere especial (ex.: *,.!@)`}
           </Text>
           {error.password && (
             <Text style={{ color: "red", paddingHorizontal: 16 }}>{error.password}</Text>
@@ -220,9 +224,13 @@ const RegisterScreen = () => {
               </TouchableOpacity>
             }
           />
-          <Text style={{ color: "black", paddingHorizontal: 16 }}>Insira seu endereço ou local atual clicando no icone</Text>
+          <Text style={{ color: "black", paddingHorizontal: 16 }}>
+            Insira seu endereço ou local atual clicando no icone
+          </Text>
           {error.address && (
-            <Text style={{ color: "red", paddingHorizontal: 16 }}>Preencha o endereço</Text>
+            <Text style={{ color: "red", paddingHorizontal: 16 }}>
+              Preencha o endereço
+            </Text>
           )}
 
           {/* Sign Up Button */}
@@ -307,6 +315,28 @@ const RegisterScreen = () => {
         showSuccess={showSuccess}
         handleAnimationFinish={handleAnimationFinish}
       />
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            height: 200,
+            borderTopEndRadius: 10,
+            borderTopStartRadius: 10,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: "#F7743E",
+            paddingVertical: 16,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+            LOGALI
+          </Text>
+          <ActivityIndicator size="large" color="#39BFBF" />
+        </View>
+      )}
     </KeyboardAvoidingView>
   )
 }
