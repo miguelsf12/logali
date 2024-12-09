@@ -6,6 +6,7 @@ import {
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native"
 import Input from "../components/Input"
 import { FontAwesome5, FontAwesome6, Ionicons } from "@expo/vector-icons"
@@ -14,11 +15,12 @@ import ShowSuccess from "../components/ShowSucess"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "@react-navigation/native"
 import { useRouter } from "expo-router"
-import imageHeader from '../assets/images/car-login-screen.jpeg'
+import imageHeader from "../assets/images/car-login-screen.jpeg"
 
 const LoginScreen = () => {
   const [data, setData] = useState({})
   const [error, setError] = useState({})
+  const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const navigation = useNavigation()
@@ -62,8 +64,10 @@ const LoginScreen = () => {
 
   const onSubmit = async () => {
     setError({})
+    setLoading(true)
     const response = await login(form)
     setData(response)
+    setLoading(false)
 
     if (response.status === 400) {
       const errorField = response.message.match(/Invalid param: (\w+)/)
@@ -87,7 +91,6 @@ const LoginScreen = () => {
       await AsyncStorage.setItem("authToken", token)
       setShowSuccess(true)
     }
-
   }
 
   const handleAnimationFinish = () => {
@@ -237,6 +240,26 @@ const LoginScreen = () => {
         showSuccess={showSuccess}
         handleAnimationFinish={handleAnimationFinish}
       />
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            height: 200,
+            borderTopEndRadius: 10,
+            borderTopStartRadius: 10,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: "#F7743E",
+            paddingVertical: 16,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>LOGALI</Text>
+          <ActivityIndicator size="large" color="#39BFBF" />
+        </View>
+      )}
     </KeyboardAvoidingView>
   )
 }

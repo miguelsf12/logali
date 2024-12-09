@@ -9,7 +9,7 @@ import {
   FlatList,
   StyleSheet,
   Image,
-  Switch,
+  ActivityIndicator,
   Alert,
 } from "react-native"
 import { AntDesign, FontAwesome, FontAwesome6 } from "@expo/vector-icons"
@@ -28,6 +28,7 @@ const AddServiceScreen = () => {
     location: "",
   })
   const [images, setImages] = useState([])
+  const [loading, setLoading] = useState(false)
   const [isModalVisible, setModalVisible] = useState(false)
 
   // Função para pegar as imagens
@@ -79,7 +80,9 @@ const AddServiceScreen = () => {
         })
       })
 
+      setLoading(true)
       const response = await addservice(formData, token)
+      setLoading(false)
 
       if (!response.status) {
         Alert.alert("Serviço adicionado com sucesso!")
@@ -207,6 +210,26 @@ const AddServiceScreen = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            height: 200,
+            borderTopEndRadius: 10,
+            borderTopStartRadius: 10,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: "#F7743E",
+            paddingVertical: 16,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>LOGALI</Text>
+          <ActivityIndicator size="large" color="#39BFBF" />
+        </View>
+      )}
     </View>
   )
 }
