@@ -17,7 +17,7 @@ import ShowSuccess from "../components/ShowSucess"
 import * as Location from "expo-location"
 import { sendActualLocation } from "../services/clientService"
 import { useRouter } from "expo-router"
-import imageHeader from '../assets/images/car-register-screen.jpeg'
+import imageHeader from "../assets/images/car-register-screen.jpeg"
 
 const RegisterScreen = () => {
   const [data, setData] = useState({})
@@ -160,6 +160,7 @@ const RegisterScreen = () => {
           </Text>
 
           <Input
+            style={{ backgroundColor: "#D1D1D1" }}
             name="name"
             value={form.name}
             placeholder={"Nome"}
@@ -171,6 +172,7 @@ const RegisterScreen = () => {
           )}
 
           <Input
+            style={{ backgroundColor: "#D1D1D1" }}
             name="email"
             value={form.email}
             placeholder={"Email"}
@@ -182,17 +184,19 @@ const RegisterScreen = () => {
           )}
 
           <Input
+            style={{ backgroundColor: "#D1D1D1" }}
             name="cpf"
             value={form.cpf}
             placeholder={"CPF"}
             onChange={(name, value) => handleInputChange("cpf", value)}
             icon={<AntDesign name="idcard" size={24} color="#7D7D7D" />}
           />
-          {error && (
+          {error.cpf && (
             <Text style={{ color: "red", paddingHorizontal: 16 }}>{error.cpf}</Text>
           )}
 
           <Input
+            style={{ backgroundColor: "#D1D1D1" }}
             name="password"
             value={form.password}
             placeholder={"Senha"}
@@ -208,12 +212,16 @@ const RegisterScreen = () => {
               </TouchableOpacity>
             }
           />
+          <Text style={{ color: "black", paddingHorizontal: 16 }}>
+            {`A senha deve ter um número e um caractere especial (ex.: *,.!@)`}
+          </Text>
           {error.password && (
             <Text style={{ color: "red", paddingHorizontal: 16 }}>{error.password}</Text>
           )}
 
           {/* Input de endereço com ícone de localização */}
           <Input
+            style={{ backgroundColor: "#D1D1D1" }}
             name="address"
             value={form.address} // Apenas use o valor do form para o endereço
             placeholder={"Endereço"}
@@ -224,6 +232,10 @@ const RegisterScreen = () => {
               </TouchableOpacity>
             }
           />
+          <Text style={{ color: "black", paddingHorizontal: 16 }}>Insira seu endereço ou local atual clicando no icone</Text>
+          {error.address && (
+            <Text style={{ color: "red", paddingHorizontal: 16 }}>Preencha o endereço</Text>
+          )}
 
           {/* Sign Up Button */}
           <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
