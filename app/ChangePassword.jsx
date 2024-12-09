@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { View, Text, TouchableOpacity, Alert } from "react-native"
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from "react-native"
 import Input from "../components/Input"
 import { AntDesign, Ionicons } from "@expo/vector-icons"
 import { changePassword } from "../services/authService"
@@ -8,6 +8,7 @@ import { useRouter } from "expo-router"
 const ChangePassword = () => {
   const [data, setData] = useState({})
   const [error, setError] = useState({})
+  const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
 
@@ -45,8 +46,10 @@ const ChangePassword = () => {
 
   const onSubmit = async () => {
     setError({})
+    setLoading(true)
     const response = await changePassword(form)
     setData(response)
+    setLoading(false)
 
     if (response.status === 400) {
       const errorField = response.message.match(/Invalid param: (\w+)/)
@@ -77,6 +80,7 @@ const ChangePassword = () => {
     <View style={{ flex: 1, backgroundColor: "#F9FAFA", paddingTop: 80 }}>
       <Text style={{ color: "black", paddingHorizontal: 16, fontSize: 15 }}>CPF</Text>
       <Input
+        style={{ backgroundColor: "#D1D1D1" }}
         name="cpf"
         value={form.cpf}
         onChange={(name, value) => handleInputChange("cpf", value)}
@@ -90,6 +94,7 @@ const ChangePassword = () => {
         Nova senha
       </Text>
       <Input
+        style={{ backgroundColor: "#D1D1D1" }}
         name="password"
         value={form.password}
         onChange={(name, value) => handleInputChange("password", value)}
@@ -108,6 +113,7 @@ const ChangePassword = () => {
         Confirme a nova senha
       </Text>
       <Input
+        style={{ backgroundColor: "#D1D1D1" }}
         name="passwordConfirm"
         value={form.passwordConfirm}
         onChange={(name, value) => handleInputChange("passwordConfirm", value)}
@@ -138,6 +144,26 @@ const ChangePassword = () => {
           </Text>
         </TouchableOpacity>
       </View>
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            height: 200,
+            borderTopEndRadius: 10,
+            borderTopStartRadius: 10,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: "#F7743E",
+            paddingVertical: 16,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>LOGALI</Text>
+          <ActivityIndicator size="large" color="#39BFBF" />
+        </View>
+      )}
     </View>
   )
 }
