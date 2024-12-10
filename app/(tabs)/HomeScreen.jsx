@@ -57,7 +57,6 @@ export default function HomeScreen() {
 
         const user = await getUserProfile(token)
         setUserOn(user)
-
       } catch (error) {
         console.error("Erro ao buscar usuário:", error)
       }
@@ -143,8 +142,7 @@ export default function HomeScreen() {
   }
 
   const toMyService = () => {
-    // router.push("OwnerServiceScreen")
-    navigation.navigate("OwnerServiceScreen")
+    router.push("OwnerServiceScreen")
   }
 
   const toService = (serviceId) => {
@@ -182,7 +180,10 @@ export default function HomeScreen() {
               </Text>
             </View>
             <View style={styles.getStarted}>
-              <Pressable style={styles.getStartedButton}>
+              <Pressable
+                style={styles.getStartedButton}
+                onPress={() => router.push("SearchScreen")}
+              >
                 <Text style={styles.getStartedTextFind}>Procurar</Text>
               </Pressable>
               {!userOn.provider ? (
