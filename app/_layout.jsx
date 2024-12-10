@@ -9,6 +9,7 @@ const Layout = () => {
       <Stack.Screen name="LoginScreen" options={{ title: "Login" }} />
       <Stack.Screen name="RegisterScreen" options={{ title: "Registrar" }} />
       <Stack.Screen name="AddServiceScreen" options={{ title: "Adicionar Serviço" }} />
+      <Stack.Screen name="SearchScreen" options={{ title: "Procurar Serviço" }} />
       <Stack.Screen
         name="service/[serviceId]"
         options={{ title: "Detalhes do Serviço" }}
