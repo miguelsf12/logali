@@ -1,4 +1,12 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image } from "react-native"
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  TextInput,
+} from "react-native"
 import Input from "../components/Input"
 import Entypo from "@expo/vector-icons/Entypo"
 import { useEffect, useState } from "react"
@@ -50,33 +58,75 @@ export default function SearchScreen() {
 
   return (
     <View style={styles.container}>
-      <Input
+      {/* <Input
         placeholder="Procure o serviço que deseja"
-        style={{ backgroundColor: "#E8E8E8" }}
+        style={{ backgroundColor: "#E8E8E8", fontSize: 12 }}
         name="filter"
         onChange={handleInputChange}
         icon={
           <Entypo name="magnifying-glass" onPress={onSubmit} size={24} color="black" />
         }
-      />
+      /> */}
+
+      {/* Input */}
+      <View>
+        <View
+          style={{
+            flexDirection: "row",
+            borderRadius: 16,
+            alignItems: "center",
+            backgroundColor: "#E8E8E8",
+          }}
+        >
+          <TextInput
+            autoFocus={false}
+            placeholder="Procure o serviço que deseja"
+            style={{
+              flex: 1,
+              padding: 16,
+              width: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+              height: 53,
+              fontSize: 12,
+              color: "#1C1D22",
+              borderTopLeftRadius: 16,
+
+              borderBottomLeftRadius: 16,
+            }}
+            onChangeText={handleInputChange}
+            onSubmit={onSubmit}
+          />
+          <View
+            style={{
+              paddingHorizontal: 16,
+              // backgroundColor: "#EEEFF2",
+              borderTopRightRadius: 16,
+              borderBottomRightRadius: 16,
+            }}
+          >
+            <Entypo name="magnifying-glass" onPress={onSubmit} size={24} color="black" />
+          </View>
+        </View>
+      </View>
 
       <ScrollView vertical={true}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <View style={styles.filtersOptions}>
             <TouchableOpacity style={styles.filterOption}>
-              <Text>Todos os serviços</Text>
+              <Text style={styles.filterOptionText}>Todos os serviços</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.filterOption}>
-              <Text>Borracharia</Text>
+              <Text style={styles.filterOptionText}>Borracharia</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.filterOption}>
-              <Text>Limpeza</Text>
+              <Text style={styles.filterOptionText}>Limpeza</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.filterOption}>
-              <Text>Organização de Eventos</Text>
+              <Text style={styles.filterOptionText}>Organização de Eventos</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -134,10 +184,15 @@ const styles = StyleSheet.create({
   },
   filterOption: {
     backgroundColor: "#E8E8E8",
+    fontSize: 12,
     padding: 8,
     height: 35,
     borderRadius: 8,
     justifyContent: "center",
+    alignItems: "center",
+  },
+  filterOptionText: {
+    fontSize: 12,
   },
   contentsService: {
     width: "100%",
@@ -152,6 +207,7 @@ const styles = StyleSheet.create({
   },
   contentText: {
     paddingLeft: 14,
+    paddingBottom: 10,
   },
   image: {
     width: 130,
