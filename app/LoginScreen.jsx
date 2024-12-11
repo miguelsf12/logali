@@ -117,7 +117,7 @@ const LoginScreen = () => {
               borderRadius: 16,
               marginBottom: 20,
             }}
-            imageStyle={{ borderRadius: 16 }}
+            imageStyle={{ borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }}
           />
         </View>
 
