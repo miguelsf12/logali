@@ -9,10 +9,8 @@ import {
   TextInput,
   Modal,
   FlatList,
-  Switch,
   Platform,
   Linking,
-  Pressable,
 } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -169,8 +167,11 @@ export default function OwnerServiceScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={{ backgroundColor: "#F9FAFA" }}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.container}>
         {/* Title and Description */}
         <View style={styles.header}>
           <View
@@ -369,16 +370,18 @@ export default function OwnerServiceScreen() {
             <Text style={styles.primaryButtonText}>Promover meu serviço</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 80,
-    backgroundColor: "#f1f5f9",
+    paddingTop: Platform.select({
+      ios: 70,
+      android: 30,
+    }),
   },
   header: {
     flexDirection: "row",
