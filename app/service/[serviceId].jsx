@@ -36,7 +36,6 @@ const ServiceDetailScreen = () => {
 
         const routes = await getRoutesToService(serviceId, token)
         setRoutePoints(routes[0][0].overview_polyline.points)
-        
       } catch (error) {
         console.error("Erro ao buscar o serviço:", error)
       }
@@ -82,47 +81,49 @@ const ServiceDetailScreen = () => {
         enableOverScroll={true}
       >
         <BottomSheetView style={styles.contentContainer}>
-          <View style={styles.sheetContent}>
-            <Text style={styles.title}>{service.name}</Text>
-            <Text style={styles.description}>{service.description}</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.imageScrollContainer}
-            >
-              {service.images?.map((imagePath, index) => (
-                <View key={index} style={styles.imageWrapper}>
-                  <Image source={{ uri: imagePath }} style={styles.image} />
-                </View>
-              ))}
-            </ScrollView>
-            <View style={styles.detail}>
-              <Text style={styles.detailTitle}>Localização</Text>
-              <TouchableOpacity
-                onPress={() =>
-                  openMap(
-                    service.location.coordinates[0],
-                    service.location.coordinates[1],
-                    service.location.address
-                  )
-                }
+          <ScrollView vertical={true} showsVerticalScrollIndicator={false}>
+            <View style={styles.sheetContent}>
+              <Text style={styles.title}>{service.name}</Text>
+              <Text style={styles.description}>{service.description}</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.imageScrollContainer}
               >
-                <Text style={styles.detailValue}>
-                  {service.location.address}
-                  {"    "}
-                  <FontAwesome name="location-arrow" size={24} color="#7d7d7d" />
-                </Text>
-              </TouchableOpacity>
+                {service.images?.map((imagePath, index) => (
+                  <View key={index} style={styles.imageWrapper}>
+                    <Image source={{ uri: imagePath }} style={styles.image} />
+                  </View>
+                ))}
+              </ScrollView>
+              <View style={styles.detail}>
+                <Text style={styles.detailTitle}>Localização</Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    openMap(
+                      service.location.coordinates[0],
+                      service.location.coordinates[1],
+                      service.location.address
+                    )
+                  }
+                >
+                  <Text style={styles.detailValue}>
+                    {service.location.address}
+                    {"    "}
+                    <FontAwesome name="location-arrow" size={24} color="#7d7d7d" />
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.detail}>
+                <Text style={styles.detailTitle}>Categoria</Text>
+                <Text style={styles.detailValue}>{service.category}</Text>
+              </View>
+              <View style={styles.detail}>
+                <Text style={styles.detailTitle}>Provedor</Text>
+                <Text style={styles.detailValue}>{service.provider.name}</Text>
+              </View>
             </View>
-            <View style={styles.detail}>
-              <Text style={styles.detailTitle}>Categoria</Text>
-              <Text style={styles.detailValue}>{service.category}</Text>
-            </View>
-            <View style={styles.detail}>
-              <Text style={styles.detailTitle}>Provedor</Text>
-              <Text style={styles.detailValue}>{service.provider.name}</Text>
-            </View>
-          </View>
+          </ScrollView>
         </BottomSheetView>
       </BottomSheet>
     </GestureHandlerRootView>
