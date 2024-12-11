@@ -28,6 +28,9 @@ export default function Input({
           style={{
             flex: 1,
             padding: 16,
+            width: "100%",
+            alignContent: "center",
+            justifyContent: "center",
             height: 53,
             fontSize: 16,
             color: "#1C1D22",
