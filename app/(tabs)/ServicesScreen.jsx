@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Image,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -108,83 +109,91 @@ export default function MapScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Map style={styles.map} />
-      <View style={styles.inputContainer}>
-        <Input
-          placeholder="Insira sua localização"
-          style={styles.inputLoc}
-          name="address"
-          onChange={handleInputChange}
-          value={inputValue}
-          icon={
-            <FontAwesome
-              onPress={onSubmitLoc}
-              name="location-arrow"
-              size={24}
-              color="#7d7d7d"
-            />
-          }
-        />
-      </View>
-
-      <View style={styles.containerService}>
-        <Text style={styles.title}>Serviços Próximos</Text>
-        <View style={styles.row}>
-          <Text style={styles.label}>Alterar raio</Text>
-          <Text style={styles.radiusValue}>{radius} km</Text>
-        </View>
-
-        <View style={styles.sliderContainer}>
-          <Slider
-            style={styles.slider}
-            minimumValue={1}
-            maximumValue={100}
-            step={1}
-            value={radius}
-            onValueChange={(value) => setRadius(value)}
-            minimumTrackTintColor="#019863"
-            maximumTrackTintColor="#E9DFCE"
-            thumbTintColor="#019863"
+    <ScrollView
+      style={{ backgroundColor: "#fff" }}
+      vertical={true}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.container}>
+        <Map style={styles.map} />
+        <View style={styles.inputContainer}>
+          <Input
+            placeholder="Insira sua localização"
+            style={styles.inputLoc}
+            name="address"
+            onChange={handleInputChange}
+            value={inputValue}
+            icon={
+              <FontAwesome
+                onPress={onSubmitLoc}
+                name="location-arrow"
+                size={24}
+                color="#7d7d7d"
+              />
+            }
           />
         </View>
 
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          {loading ? (
-            <ActivityIndicator size="large" color="#0000ff" /> // Exibe o loading
-          ) : servicesAround.length < 1 ? (
-            <Text style={styles.noServicesText}>Nenhum serviço próximo</Text>
-          ) : (
-            servicesAround.length != 0 &&
-            servicesAround.map((service) => (
-              <TouchableOpacity
-                onPress={() => toService(service._id)} // Passa a função corretamente
-                key={service._id}
-                style={styles.card}
-              >
-                <Image
-                  source={{
-                    uri: `${service.images[0]}`,
-                  }}
-                  style={styles.image}
-                />
-                <Text style={styles.serviceName}>{service.name}</Text>
-              </TouchableOpacity>
-            ))
-          )}
-        </ScrollView>
+        <View style={styles.containerService}>
+          <Text style={styles.title}>Serviços Próximos</Text>
+          <View style={styles.row}>
+            <Text style={styles.label}>Alterar raio</Text>
+            <Text style={styles.radiusValue}>{radius} km</Text>
+          </View>
+
+          <View style={styles.sliderContainer}>
+            <Slider
+              style={styles.slider}
+              minimumValue={1}
+              maximumValue={100}
+              step={1}
+              value={radius}
+              onValueChange={(value) => setRadius(value)}
+              minimumTrackTintColor="#019863"
+              maximumTrackTintColor="#E9DFCE"
+              thumbTintColor="#019863"
+            />
+          </View>
+
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            {loading ? (
+              <ActivityIndicator size="large" color="#0000ff" /> // Exibe o loading
+            ) : servicesAround.length < 1 ? (
+              <Text style={styles.noServicesText}>Nenhum serviço próximo</Text>
+            ) : (
+              servicesAround.length != 0 &&
+              servicesAround.map((service) => (
+                <TouchableOpacity
+                  onPress={() => toService(service._id)} // Passa a função corretamente
+                  key={service._id}
+                  style={styles.card}
+                >
+                  <Image
+                    source={{
+                      uri: `${service.images[0]}`,
+                    }}
+                    style={styles.image}
+                  />
+                  <Text style={styles.serviceName}>{service.name}</Text>
+                </TouchableOpacity>
+              ))
+            )}
+          </ScrollView>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 60,
+    paddingTop: Platform.select({
+      android: 30,
+      ios: 70,
+    }),
     flex: 1,
     width: "100%",
     alignItems: "center",
-    backgroundColor: "#fff",
   },
   map: {
     height: 230,
