@@ -131,7 +131,7 @@ const RegisterScreen = () => {
                 justifyContent: "flex-end",
                 borderRadius: 16,
               }}
-              imageStyle={{ borderRadius: 16 }}
+              imageStyle={{ borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }}
             />
           </View>
 
@@ -331,9 +331,7 @@ const RegisterScreen = () => {
             justifyContent: "center",
           }}
         >
-          <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
-            LOGALI
-          </Text>
+          <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>LOGALI</Text>
           <ActivityIndicator size="large" color="#39BFBF" />
         </View>
       )}
