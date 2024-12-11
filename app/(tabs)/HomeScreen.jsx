@@ -6,6 +6,8 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  StatusBar,
+  Platform,
 } from "react-native"
 import { useEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
@@ -151,7 +153,11 @@ export default function HomeScreen() {
 
   return (
     <>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <StatusBar barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"} />
+      <ScrollView
+        style={{ backgroundColor: "#F9FAFA" }}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.container}>
           <Image source={homeImage} style={styles.heroImage} />
           <View style={styles.heroSection}>
@@ -278,7 +284,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFA",
   },
   heroSection: {
     position: "relative",
