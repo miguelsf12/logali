@@ -9,7 +9,7 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-
+/android
 # macOS
 .DS_Store
 
@@ -49,7 +49,7 @@ yarn-error.*
 
 # local env files
 .env*.local
-
+.env
 # typescript
 *.tsbuildinfo
 
