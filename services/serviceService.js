@@ -19,7 +19,7 @@ export const getServicesFiltered = async (filters = {}, token) => {
     queryParams.append("category", validCategory.name)
   }
   if (name) queryParams.append("name", name)
-  console.log(queryParams.toString())
+    
   return await api.get(
     `/user/service/get-services-filtered?${queryParams.toString()}`,
     token
