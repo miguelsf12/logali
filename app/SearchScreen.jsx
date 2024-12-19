@@ -22,8 +22,8 @@ export default function SearchScreen() {
 
   const handleInputChange = (name, value) => {
     setFilter((prevForm) => ({
-      // ...prevForm,
-      name: value,
+      ...prevForm,
+      [name]: value, // Atualiza apenas a chave especificada.
       category: value,
     }))
     console.log(filter)
@@ -47,6 +47,12 @@ export default function SearchScreen() {
   }
 
   const onSubmit = async () => {
+    if (Object.keys(filter).length === 0 || !filter.name?.trim()) {
+      // Verifica se o filtro está vazio ou se o campo "name" está em branco
+      alert("Por favor, insira um termo para a busca.")
+      return
+    }
+
     try {
       const response = await getServicesFiltered(filter, token)
       setServicesFound(response)
@@ -91,11 +97,10 @@ export default function SearchScreen() {
               fontSize: 12,
               color: "#1C1D22",
               borderTopLeftRadius: 16,
-
               borderBottomLeftRadius: 16,
             }}
-            onChangeText={handleInputChange}
-            onSubmit={onSubmit}
+            onChangeText={(value) => handleInputChange("name", value)} // Especifica a chave a ser atualizada.
+            onSubmitEditing={onSubmit} // Corrigido para acionar o evento no teclado "Enter".
           />
           <View
             style={{
@@ -132,38 +137,41 @@ export default function SearchScreen() {
         </ScrollView>
 
         <View style={styles.contentsService}>
-          {servicesFound.length == 0 && (
+          {servicesFound.length === 0 && (
             <Text
-              style={{ color: "#a7a7a7", marginTop: 20, fontSize: 17, fontWeight: 600 }}
+              style={{ color: "#a7a7a7", marginTop: 20, fontSize: 17, fontWeight: "600" }}
             >
-              Experimente fazer uma busca, talvez ela te ajude!
+              {Object.keys(filter).length === 0
+                ? "Experimente fazer uma busca, talvez ela te ajude!"
+                : "Serviço não encontrado"}
             </Text>
           )}
 
-          {servicesFound.map((service) => (
-            <TouchableOpacity
-              key={service._id}
-              style={styles.cardService}
-              onPress={() => toService(service._id)}
-            >
-              <Image
-                source={{
-                  uri: `${service.images[0]}`,
-                }}
-                style={styles.image}
-              />
-              <View style={styles.contentText}>
-                <Text style={{ fontSize: 17, fontWeight: 600 }}>{service.name}</Text>
-                <Text
-                  style={{ flex: 1, marginRight: 20 }}
-                  numberOfLines={3}
-                  ellipsizeMode="tail"
-                >
-                  {service.description}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+          {servicesFound.length !== 0 &&
+            servicesFound.map((service) => (
+              <TouchableOpacity
+                key={service._id}
+                style={styles.cardService}
+                onPress={() => toService(service._id)}
+              >
+                <Image
+                  source={{
+                    uri: `${service.images[0]}`,
+                  }}
+                  style={styles.image}
+                />
+                <View style={styles.contentText}>
+                  <Text style={{ fontSize: 17, fontWeight: 600 }}>{service.name}</Text>
+                  <Text
+                    style={{ flex: 1, marginRight: 20 }}
+                    numberOfLines={3}
+                    ellipsizeMode="tail"
+                  >
+                    {service.description}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
         </View>
       </ScrollView>
     </View>
