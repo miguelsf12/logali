@@ -6,6 +6,8 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  StatusBar,
+  Platform,
 } from "react-native"
 import { useEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
@@ -145,6 +147,7 @@ export default function HomeScreen() {
 
   return (
     <>
+      <StatusBar barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"} />
       <ScrollView
         style={{ backgroundColor: "#F9FAFA" }}
         showsVerticalScrollIndicator={false}
@@ -286,7 +289,7 @@ const styles = StyleSheet.create({
   heroImage: {
     ...StyleSheet.absoluteFillObject,
     borderRadius: 8,
-    height: 320,
+    height: 340,
     width: "100vw",
   },
   heroText: {
@@ -307,9 +310,11 @@ const styles = StyleSheet.create({
   },
   getStartedButton: {
     width: "45%",
-    backgroundColor: "#607AFB",
+    backgroundColor: "#007AAA",
     padding: 12,
     borderRadius: 8,
+    justifyContent: "center",
+    textAlign: "center",
     alignItems: "center",
   },
   getStartedTextFind: {
@@ -321,6 +326,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   containerService: {
+    marginTop: 15,
     padding: 16,
   },
   title: {
