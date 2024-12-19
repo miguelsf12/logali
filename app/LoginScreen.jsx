@@ -6,24 +6,21 @@ import {
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
 } from "react-native"
 import Input from "../components/Input"
-import { FontAwesome5, FontAwesome6, Ionicons } from "@expo/vector-icons"
+import { FontAwesome6, Ionicons } from "@expo/vector-icons"
 import { login } from "../services/authService"
-import ShowSuccess from "../components/ShowSucess"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "@react-navigation/native"
 import { useRouter } from "expo-router"
 import imageHeader from "../assets/images/car-login-screen.jpeg"
+import LoadingIndicator from "../components/LoadingIndicator"
 
 const LoginScreen = () => {
   const [data, setData] = useState({})
   const [error, setError] = useState({})
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [showSuccess, setShowSuccess] = useState(false)
-  const navigation = useNavigation()
   const router = useRouter()
 
   const [form, setForm] = useState({
@@ -89,12 +86,8 @@ const LoginScreen = () => {
     } else {
       const token = response.token
       await AsyncStorage.setItem("authToken", token)
-      setShowSuccess(true)
+      router.replace("/(tabs)/HomeScreen")
     }
-  }
-
-  const handleAnimationFinish = () => {
-    router.replace("/(tabs)/HomeScreen")
   }
 
   const toChangePassword = () => {
@@ -162,22 +155,30 @@ const LoginScreen = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* Sign Up Button */}
-        <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#607AFB",
-              borderRadius: 16,
-              paddingVertical: 12,
-              alignItems: "center",
-            }}
-            onPress={onSubmit}
-          >
-            <Text style={{ color: "#F9FAFA", fontWeight: "bold", fontSize: 16 }}>
-              Entrar
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {!loading ? (
+          <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#607AFB",
+                borderRadius: 16,
+                paddingVertical: 12,
+                alignItems: "center",
+              }}
+              onPress={onSubmit}
+            >
+              <Text style={{ color: "#F9FAFA", fontWeight: "bold", fontSize: 16 }}>
+                Entrar
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={{ marginTop: 40 }}>
+            <LoadingIndicator
+              visible={loading}
+              imageSource={require("../assets/images/adaptive-icon.png")}
+            />
+          </View>
+        )}
 
         {/* Social Media Sign-In */}
         {/* <Text
@@ -238,30 +239,6 @@ const LoginScreen = () => {
           </TouchableOpacity>
         </View> */}
       </View>
-      <ShowSuccess
-        showSuccess={showSuccess}
-        handleAnimationFinish={handleAnimationFinish}
-      />
-      {loading && (
-        <View
-          style={{
-            position: "absolute",
-            height: 200,
-            borderTopEndRadius: 10,
-            borderTopStartRadius: 10,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: "#F7743E",
-            paddingVertical: 16,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>LOGALI</Text>
-          <ActivityIndicator size="large" color="#39BFBF" />
-        </View>
-      )}
     </KeyboardAvoidingView>
   )
 }
