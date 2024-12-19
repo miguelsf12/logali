@@ -6,8 +6,6 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  StatusBar,
-  Platform,
 } from "react-native"
 import { useEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
@@ -21,12 +19,6 @@ import Slider from "@react-native-community/slider"
 import { router } from "expo-router"
 import { debounce } from "lodash"
 import { ActivityIndicator } from "react-native"
-
-const popularServices = [
-  { id: 1, name: "Serviço 1", image: "url_imagem_1" },
-  { id: 2, name: "Serviço 2", image: "url_imagem_2" },
-  { id: 3, name: "Serviço 3", image: "url_imagem_3" },
-]
 
 export default function HomeScreen() {
   const navigation = useNavigation()
@@ -153,7 +145,6 @@ export default function HomeScreen() {
 
   return (
     <>
-      <StatusBar barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"} />
       <ScrollView
         style={{ backgroundColor: "#F9FAFA" }}
         showsVerticalScrollIndicator={false}
