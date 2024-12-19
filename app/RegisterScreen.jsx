@@ -14,17 +14,16 @@ import Ionicons from "@expo/vector-icons/Ionicons"
 import Entypo from "@expo/vector-icons/Entypo"
 import AntDesign from "@expo/vector-icons/AntDesign"
 import { register } from "../services/authService"
-import ShowSuccess from "../components/ShowSucess"
 import * as Location from "expo-location"
 import { sendActualLocation } from "../services/clientService"
 import { useRouter } from "expo-router"
 import imageHeader from "../assets/images/car-register-screen.jpeg"
+import LoadingIndicator from "../components/LoadingIndicator"
 
 const RegisterScreen = () => {
   const [data, setData] = useState({})
   const [error, setError] = useState({})
   const [loading, setLoading] = useState(false)
-  const [showSuccess, setShowSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [form, setForm] = useState({
     name: "",
@@ -102,7 +101,7 @@ const RegisterScreen = () => {
         setError((prev) => ({ ...prev, [fieldName]: "O campo está faltando." }))
       }
     } else {
-      setShowSuccess(true)
+      router.replace("LoginScreen")
     }
 
     console.log(error)
@@ -119,8 +118,11 @@ const RegisterScreen = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ flex: 1, backgroundColor: "#F9FAFA" }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ backgroundColor: "#F9FAFA" }}
+      >
+        <View style={{ flex: 1}}>
           {/* Background Image */}
           <View>
             <ImageBackground
@@ -232,23 +234,30 @@ const RegisterScreen = () => {
               Preencha o endereço
             </Text>
           )}
-
-          {/* Sign Up Button */}
-          <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#607AFB",
-                borderRadius: 16,
-                paddingVertical: 12,
-                alignItems: "center",
-              }}
-              onPress={onSubmit}
-            >
-              <Text style={{ color: "#F9FAFA", fontWeight: "bold", fontSize: 16 }}>
-                Registrar
-              </Text>
-            </TouchableOpacity>
-          </View>
+          {!loading ? (
+            <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#607AFB",
+                  borderRadius: 16,
+                  paddingVertical: 12,
+                  alignItems: "center",
+                }}
+                onPress={onSubmit}
+              >
+                <Text style={{ color: "#F9FAFA", fontWeight: "bold", fontSize: 16 }}>
+                  Registrar
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={{ marginTop: 40 }}>
+              <LoadingIndicator
+                visible={loading}
+                imageSource={require("../assets/images/adaptive-icon.png")}
+              />
+            </View>
+          )}
 
           {/* Social Media Sign-In */}
           {/* <Text
@@ -310,31 +319,6 @@ const RegisterScreen = () => {
           </View> */}
         </View>
       </ScrollView>
-
-      <ShowSuccess
-        showSuccess={showSuccess}
-        handleAnimationFinish={handleAnimationFinish}
-      />
-      {loading && (
-        <View
-          style={{
-            position: "absolute",
-            height: 200,
-            borderTopEndRadius: 10,
-            borderTopStartRadius: 10,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: "#F7743E",
-            paddingVertical: 16,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>LOGALI</Text>
-          <ActivityIndicator size="large" color="#39BFBF" />
-        </View>
-      )}
     </KeyboardAvoidingView>
   )
 }
