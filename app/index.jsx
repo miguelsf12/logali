@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#216A8B",
+    backgroundColor: "#00AAFF",
   },
   logo: {
     width: "100%", // Largura total da tela
