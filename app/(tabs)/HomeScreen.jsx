@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   StatusBar,
   Platform,
+  Alert,
 } from "react-native"
 import { useEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
@@ -15,30 +16,32 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import Input from "../../components/Input"
 import homeImage from "../../assets/images/home-image.jpeg"
 import { FontAwesome } from "@expo/vector-icons"
-import { getUserProfile, sendActualLocation } from "../../services/clientService"
-import { getAllServices, getServicesFiltered } from "../../services/serviceService"
+import { sendActualLocation } from "../../services/clientService"
+import { getServicesFiltered } from "../../services/serviceService"
 import Slider from "@react-native-community/slider"
 import { router } from "expo-router"
 import { debounce } from "lodash"
 import { ActivityIndicator } from "react-native"
+import categories from "../../category.json"
+import * as Location from "expo-location"
 
 export default function HomeScreen() {
   const navigation = useNavigation()
   const [token, setToken] = useState(null)
   const [userOn, setUserOn] = useState({})
-  // const [myService, setMyService] = useState({})
   const [radius, setRadius] = useState(5)
-  const [services, setServices] = useState([])
   const [servicesAround, setServicesAround] = useState([])
   const [loading, setLoading] = useState(false)
   const [locationActual, setLocationActual] = useState(null)
+  const [location, setLocation] = useState(null)
   const [address, setAddress] = useState({
     address: "",
   })
   const [inputValue, setInputValue] = useState(address.address)
 
+  // Resgatar token
   useEffect(() => {
-    const fetchAllService = async () => {
+    const checkToken = async () => {
       try {
         const token = await AsyncStorage.getItem("authToken")
         setToken(token)
@@ -46,27 +49,50 @@ export default function HomeScreen() {
         if (!token) {
           navigation.navigate("LoginScreen")
         }
-
-        const allServices = await getAllServices(token)
-
-        setServices(allServices)
-
-        const user = await getUserProfile(token)
-        setUserOn(user)
       } catch (error) {
-        console.error("Erro ao buscar usuário:", error)
+        console.error(error)
       }
     }
 
-    fetchAllService()
-  }, [token, navigation])
+    checkToken()
+  }, [])
 
+  // Permissão de Localização e resgate
+  useEffect(() => {
+    ;(async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync()
+      if (status !== "granted") {
+        Alert.alert(
+          "Permissão para acessar localização foi negada. O App pode não funcionar corretamente!"
+        )
+        return
+      }
+
+      let currentLocation = await Location.getCurrentPositionAsync({})
+      const locTrated = {
+        latitude: currentLocation.coords["latitude"],
+        longitude: currentLocation.coords["longitude"],
+      }
+
+      setLocation({ address: ` ${locTrated.latitude}, ${locTrated.longitude}` })
+
+      const response = await sendActualLocation(location, token)
+      if (!response.status) {
+        console.log(response)
+        // setLocationActual(response)
+        await AsyncStorage.setItem("actualLocation", JSON.stringify(response))
+      }
+    })()
+  }, [navigation])
+
+  // Resgate de serviços próximos
   useEffect(() => {
     const fetchServicesAround = debounce(async () => {
       setLoading(true)
       try {
         const filters = { radius }
         const response = await getServicesFiltered(filters, token)
+
         setServicesAround(response)
       } catch (error) {
         console.error("Erro ao buscar serviços filtrados:", error)
@@ -82,6 +108,7 @@ export default function HomeScreen() {
     }
   }, [token, radius])
 
+  // Buscar loc do AsyncStorage (Talvez não será mais necessário)
   useEffect(() => {
     const fetchLocation = async () => {
       try {
@@ -107,32 +134,6 @@ export default function HomeScreen() {
     return unsubscribe // Limpeza do listener ao desmontar o componente
   }, [navigation])
 
-  useEffect(() => {
-    if (locationActual && locationActual.address) {
-      setInputValue(locationActual.address)
-    }
-  }, [locationActual, navigation])
-
-  const handleInputChange = (name, value) => {
-    setInputValue(value)
-    setAddress((prevForm) => ({
-      ...prevForm,
-      [name]: value,
-    }))
-  }
-
-  const onSubmitLoc = async () => {
-    try {
-      const response = await sendActualLocation(address, token)
-      if (!response.status) {
-        setLocationActual(response)
-        await AsyncStorage.setItem("actualLocation", JSON.stringify(response))
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   const toAddService = () => {
     router.push("AddServiceScreen")
   }
@@ -152,24 +153,16 @@ export default function HomeScreen() {
         style={{ backgroundColor: "#F9FAFA" }}
         showsVerticalScrollIndicator={false}
       >
+        {/* <Image source={homeImage} style={styles.heroImage} /> */}
         <View style={styles.container}>
-          <Image source={homeImage} style={styles.heroImage} />
           <View style={styles.heroSection}>
-            <Input
-              placeholder="Insira sua localização"
-              style={{ backgroundColor: "#EEEFF2" }}
-              name="address"
-              onChange={handleInputChange}
-              value={inputValue}
-              icon={
-                <FontAwesome
-                  onPress={onSubmitLoc}
-                  name="location-arrow"
-                  size={24}
-                  color="#7d7d7d"
-                />
-              }
-            />
+            {locationActual && locationActual.address ? (
+              <Text style={styles.locAtual} ellipsizeMode="tail" numberOfLines={2}>
+                {locationActual.address}
+              </Text>
+            ) : (
+              <Text style={styles.title}>Carregando loc</Text>
+            )}
 
             <View style={styles.heroText}>
               <Text style={styles.heroTitle}>
@@ -198,32 +191,28 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* Popular services */}
           <View style={styles.containerService}>
-            <Text style={styles.title}>Serviços Populares</Text>
-
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              {services.map((service) => (
-                <TouchableOpacity
-                  onPress={() => toService(service._id)}
-                  key={service._id}
-                  style={styles.card}
-                >
-                  <Image
-                    source={{
-                      uri: `${service.images[0]}`,
-                    }}
-                    style={styles.image}
-                  />
-                  <Text style={styles.serviceName}>{service.name}</Text>
-                </TouchableOpacity>
-              ))}
+              <View style={styles.filtersOptions}>
+                {categories.map((category) => (
+                  <TouchableOpacity
+                    key={category.id}
+                    style={styles.filterOption}
+                    onPress={() =>
+                      router.push(`/SearchCategory?category=${category.name}`)
+                    }
+                  >
+                    <Text style={styles.filterOptionText}>{category.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </ScrollView>
           </View>
 
           {/* Serviços Proximos */}
           <View style={styles.containerService}>
             <Text style={styles.title}>Serviços Próximos</Text>
+
             <View style={styles.row}>
               <Text style={styles.label}>Alterar raio</Text>
               <Text style={styles.radiusValue}>{radius} km</Text>
@@ -237,9 +226,9 @@ export default function HomeScreen() {
                 step={1}
                 value={radius}
                 onValueChange={(value) => setRadius(value)}
-                minimumTrackTintColor="#019863"
-                maximumTrackTintColor="#E9DFCE"
-                thumbTintColor="#019863"
+                minimumTrackTintColor="#00AAFF"
+                maximumTrackTintColor="#007AAA"
+                thumbTintColor="#FFFFFF"
               />
             </View>
 
@@ -296,13 +285,22 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   heroTitle: {
-    color: "white",
+    color: "#000",
     fontSize: 32,
     fontWeight: "bold",
   },
   heroSubtitle: {
-    color: "white",
+    color: "#000",
     fontSize: 14,
+  },
+  locAtual: {
+    textAlign: "center",
+    alignSelf: "center",
+    color: "#000",
+    fontSize: 16,
+    fontWeight: 700,
+    width: 140,
+    marginBottom: 20,
   },
   getStarted: {
     flexDirection: "row",
@@ -326,8 +324,24 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   containerService: {
-    marginTop: 15,
     padding: 16,
+  },
+  filtersOptions: {
+    marginTop: 13,
+    flexDirection: "row",
+    gap: 10,
+  },
+  filterOption: {
+    backgroundColor: "#E8E8E8",
+    fontSize: 12,
+    padding: 8,
+    height: 35,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  filterOptionText: {
+    fontSize: 12,
   },
   title: {
     fontSize: 24,
