@@ -115,8 +115,15 @@ export default function MapScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.container}>
+        {locationActual && locationActual.address ? (
+          <Text style={styles.locAtual} ellipsizeMode="tail" numberOfLines={2}>
+            {locationActual.address}
+          </Text>
+        ) : (
+          <Text style={styles.title}>Carregando loc</Text>
+        )}
         <Map style={styles.map} />
-        <View style={styles.inputContainer}>
+        {/* <View style={styles.inputContainer}>
           <Input
             placeholder="Insira sua localização"
             style={styles.inputLoc}
@@ -132,7 +139,7 @@ export default function MapScreen() {
               />
             }
           />
-        </View>
+        </View> */}
 
         <View style={styles.containerService}>
           <Text style={styles.title}>Serviços Próximos</Text>
@@ -149,9 +156,9 @@ export default function MapScreen() {
               step={1}
               value={radius}
               onValueChange={(value) => setRadius(value)}
-              minimumTrackTintColor="#019863"
-              maximumTrackTintColor="#E9DFCE"
-              thumbTintColor="#019863"
+              minimumTrackTintColor="#00AAFF"
+              maximumTrackTintColor="#007AAA"
+              thumbTintColor="#FFFFFF"
             />
           </View>
 
@@ -198,6 +205,15 @@ const styles = StyleSheet.create({
   map: {
     height: 230,
     width: "90%",
+  },
+  locAtual: {
+    textAlign: "center",
+    alignSelf: "center",
+    color: "#000",
+    fontSize: 16,
+    fontWeight: 700,
+    width: 140,
+    marginBottom: 20,
   },
   inputContainer: {
     marginTop: 10,
