@@ -82,7 +82,7 @@ export default function HomeScreen() {
         await AsyncStorage.setItem("actualLocation", JSON.stringify(response))
       }
     })()
-  }, [navigation])
+  }, [])
 
   // Resgate de serviços próximos
   useEffect(() => {
