@@ -33,7 +33,6 @@ export default function HomeScreen() {
   const [servicesAround, setServicesAround] = useState([])
   const [loading, setLoading] = useState(false)
   const [locationActual, setLocationActual] = useState(null)
-  const [location, setLocation] = useState(null)
   const [address, setAddress] = useState({
     address: "",
   })
@@ -74,15 +73,14 @@ export default function HomeScreen() {
         longitude: currentLocation.coords["longitude"],
       }
 
-      setLocation({ address: ` ${locTrated.latitude}, ${locTrated.longitude}` })
-
-      const response = await sendActualLocation(location, token)
+      const response = await sendActualLocation({ address: ` ${locTrated.latitude}, ${locTrated.longitude}` }, token)
       if (!response.status) {
         console.log(response)
         // setLocationActual(response)
         await AsyncStorage.setItem("actualLocation", JSON.stringify(response))
       }
     })()
+
   }, [navigation])
 
   // Resgate de serviços próximos
