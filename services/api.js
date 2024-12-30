@@ -1,5 +1,5 @@
-const BASE_URL = "https://api-logali.onrender.com" // ATIVAR NO RENDER
-// const BASE_URL = "http://192.168.1.4:3000" // IP PODE VARIAR
+// const BASE_URL = "https://api-logali.onrender.com" // ATIVAR NO RENDER
+const BASE_URL = "http://192.168.1.6:3000" // IP PODE VARIAR
 
 const api = {
   get: async (path, token) => {
