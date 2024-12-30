@@ -33,6 +33,7 @@ export default function HomeScreen() {
   const [servicesAround, setServicesAround] = useState([])
   const [loading, setLoading] = useState(false)
   const [locationActual, setLocationActual] = useState(null)
+  const [loadingLocation, setLoadingLocation] = useState(false)
 
   // Resgatar token
   useEffect(() => {
@@ -56,33 +57,48 @@ export default function HomeScreen() {
   }, [])
 
   // Permissão de Localização e resgate
+
   useEffect(() => {
-    ;(async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync()
-      if (status !== "granted") {
-        Alert.alert(
-          "Permissão para acessar localização foi negada. O App pode não funcionar corretamente!"
+    const fetchLocation = async () => {
+      try {
+        // Solicitar permissões para acessar a localização
+        let { status } = await Location.requestForegroundPermissionsAsync()
+        if (status !== "granted") {
+          Alert.alert(
+            "Permissão necessária",
+            "Este aplicativo precisa da sua localização para funcionar corretamente.",
+            [{ text: "OK", onPress: () => console.log("Permissão negada") }]
+          )
+          return
+        }
+
+        // Obter a localização atual
+        let currentLocation = await Location.getCurrentPositionAsync({})
+        const locTrated = {
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,
+        }
+
+        // Enviar para o Redis e armazenar no AsyncStorage
+        const response = await sendActualLocation(
+          { address: `${locTrated.latitude}, ${locTrated.longitude}` },
+          token
         )
-        return
-      }
 
-      let currentLocation = await Location.getCurrentPositionAsync({})
-      const locTrated = {
-        latitude: currentLocation.coords["latitude"],
-        longitude: currentLocation.coords["longitude"],
+        if (response.status) {
+          // Sucesso: armazena no AsyncStorage
+          await AsyncStorage.setItem("actualLocation", JSON.stringify(response))
+          setLocationActual(response) // Atualiza o estado da localização
+        } else {
+          console.error("Erro ao enviar a localização para o Redis:", response)
+        }
+      } catch (error) {
+        console.error("Erro ao buscar localização:", error)
       }
+    }
 
-      const response = await sendActualLocation(
-        { address: ` ${locTrated.latitude}, ${locTrated.longitude}` },
-        token
-      )
-      if (!response.status) {
-        console.log(response)
-        // setLocationActual(response)
-        await AsyncStorage.setItem("actualLocation", JSON.stringify(response))
-      }
-    })()
-  }, [])
+    fetchLocation()
+  }, [token])
 
   // Resgate de serviços próximos
   useEffect(() => {
@@ -154,7 +170,7 @@ export default function HomeScreen() {
         {/* <Image source={homeImage} style={styles.heroImage} /> */}
         <View style={styles.container}>
           <View style={styles.heroSection}>
-            {locationActual && locationActual.address ? (
+            {loadingLocation ? (
               <Text style={styles.locAtual} ellipsizeMode="tail" numberOfLines={2}>
                 {locationActual.address}
               </Text>
