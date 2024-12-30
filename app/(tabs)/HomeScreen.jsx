@@ -16,7 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import Input from "../../components/Input"
 import homeImage from "../../assets/images/home-image.jpeg"
 import { FontAwesome } from "@expo/vector-icons"
-import { sendActualLocation } from "../../services/clientService"
+import { getUserProfile, sendActualLocation } from "../../services/clientService"
 import { getServicesFiltered } from "../../services/serviceService"
 import Slider from "@react-native-community/slider"
 import { router } from "expo-router"
@@ -33,10 +33,6 @@ export default function HomeScreen() {
   const [servicesAround, setServicesAround] = useState([])
   const [loading, setLoading] = useState(false)
   const [locationActual, setLocationActual] = useState(null)
-  const [address, setAddress] = useState({
-    address: "",
-  })
-  const [inputValue, setInputValue] = useState(address.address)
 
   // Resgatar token
   useEffect(() => {
@@ -45,6 +41,9 @@ export default function HomeScreen() {
         const token = await AsyncStorage.getItem("authToken")
         setToken(token)
 
+        const response = await getUserProfile(token)
+
+        setUserOn(response)
         if (!token) {
           navigation.navigate("LoginScreen")
         }
@@ -73,14 +72,16 @@ export default function HomeScreen() {
         longitude: currentLocation.coords["longitude"],
       }
 
-      const response = await sendActualLocation({ address: ` ${locTrated.latitude}, ${locTrated.longitude}` }, token)
+      const response = await sendActualLocation(
+        { address: ` ${locTrated.latitude}, ${locTrated.longitude}` },
+        token
+      )
       if (!response.status) {
         console.log(response)
         // setLocationActual(response)
         await AsyncStorage.setItem("actualLocation", JSON.stringify(response))
       }
     })()
-
   }, [navigation])
 
   // Resgate de serviços próximos
@@ -117,7 +118,6 @@ export default function HomeScreen() {
         if (storedLocation) {
           const locationData = JSON.parse(storedLocation)
           setLocationActual(locationData)
-          setInputValue(locationData.address)
         }
       } catch (error) {
         console.error("Erro ao buscar localização:", error)
