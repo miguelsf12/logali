@@ -33,7 +33,7 @@ export default function HomeScreen() {
   const [servicesAround, setServicesAround] = useState([])
   const [loading, setLoading] = useState(false)
   const [locationActual, setLocationActual] = useState(null)
-  const [loadingLocation, setLoadingLocation] = useState(false)
+  const [loadingLocation, setLoadingLocation] = useState(true)
 
   // Resgatar token
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function HomeScreen() {
   // Permissão de Localização e resgate
 
   useEffect(() => {
-    const fetchLocation = async () => {
+    const fetchLocationInitial = async () => {
       try {
         // Solicitar permissões para acessar a localização
         let { status } = await Location.requestForegroundPermissionsAsync()
@@ -74,21 +74,18 @@ export default function HomeScreen() {
 
         // Obter a localização atual
         let currentLocation = await Location.getCurrentPositionAsync({})
-        const locTrated = {
-          latitude: currentLocation.coords.latitude,
-          longitude: currentLocation.coords.longitude,
-        }
+        const { latitude, longitude } = currentLocation.coords
+        const coords = [latitude, longitude]
+        const address = `${coords[0]}, ${coords[1]}`
 
         // Enviar para o Redis e armazenar no AsyncStorage
-        const response = await sendActualLocation(
-          { address: `${locTrated.latitude}, ${locTrated.longitude}` },
-          token
-        )
+        const response = await sendActualLocation({ address })
 
-        if (response.status) {
-          // Sucesso: armazena no AsyncStorage
+        // Sucesso: armazena no AsyncStorage prop status so vem no erro
+        if (!response.status) {
           await AsyncStorage.setItem("actualLocation", JSON.stringify(response))
           setLocationActual(response) // Atualiza o estado da localização
+          setLoadingLocation(false)
         } else {
           console.error("Erro ao enviar a localização para o Redis:", response)
         }
@@ -97,8 +94,8 @@ export default function HomeScreen() {
       }
     }
 
-    fetchLocation()
-  }, [token])
+    fetchLocationInitial()
+  }, [])
 
   // Resgate de serviços próximos
   useEffect(() => {
@@ -171,11 +168,11 @@ export default function HomeScreen() {
         <View style={styles.container}>
           <View style={styles.heroSection}>
             {loadingLocation ? (
+              <Text style={styles.title}>Carregando loc</Text>
+            ) : (
               <Text style={styles.locAtual} ellipsizeMode="tail" numberOfLines={2}>
                 {locationActual.address}
               </Text>
-            ) : (
-              <Text style={styles.title}>Carregando loc</Text>
             )}
 
             <View style={styles.heroText}>
