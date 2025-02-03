@@ -13,15 +13,12 @@ import {
 import { useEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import Input from "../../components/Input"
-import homeImage from "../../assets/images/home-image.jpeg"
-import { FontAwesome } from "@expo/vector-icons"
 import { getUserProfile, sendActualLocation } from "../../services/clientService"
 import { getServicesFiltered } from "../../services/serviceService"
 import Slider from "@react-native-community/slider"
 import { router } from "expo-router"
 import { debounce } from "lodash"
-import { ActivityIndicator } from "react-native"
+import ReactContentLoader, { Rect } from "react-content-loader/native"
 import categories from "../../category.json"
 import * as Location from "expo-location"
 
@@ -30,7 +27,7 @@ export default function HomeScreen() {
   const [token, setToken] = useState(null)
   const [userOn, setUserOn] = useState({})
   const [radius, setRadius] = useState(5)
-  const [servicesAround, setServicesAround] = useState([])
+  const [servicesAround, setServicesAround] = useState(null)
   const [loading, setLoading] = useState(false)
   const [locationActual, setLocationActual] = useState(null)
   const [loadingLocation, setLoadingLocation] = useState(true)
@@ -106,6 +103,7 @@ export default function HomeScreen() {
         const response = await getServicesFiltered(filters, token)
 
         setServicesAround(response)
+        
       } catch (error) {
         console.error("Erro ao buscar serviços filtrados:", error)
       } finally {
@@ -168,7 +166,7 @@ export default function HomeScreen() {
         <View style={styles.container}>
           <View style={styles.heroSection}>
             {loadingLocation ? (
-              <Text style={styles.title}>Carregando loc</Text>
+              <Text style={styles.title}>Carregando localização</Text>
             ) : (
               <Text style={styles.locAtual} ellipsizeMode="tail" numberOfLines={2}>
                 {locationActual.address}
@@ -210,7 +208,7 @@ export default function HomeScreen() {
                     key={category.id}
                     style={styles.filterOption}
                     onPress={() =>
-                      router.push(`/SearchCategory?category=${category.name}`)
+                      router.push(`/SearchByCategory?category=${category.name}`)
                     }
                   >
                     <Text style={styles.filterOptionText}>{category.name}</Text>
@@ -245,14 +243,20 @@ export default function HomeScreen() {
 
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
               {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" /> // Exibe o loading
-              ) : servicesAround.length < 1 ? (
+                <ReactContentLoader
+                  width={150}
+                  speed={2}
+                  primaryColor="#7d7d7d"
+                  secondaryColor="#7d7d7d"
+                >
+                  <Rect x="20" y="10" width="100%" height="130" />
+                </ReactContentLoader>
+              ) : servicesAround === null ? (
                 <Text style={styles.noServicesText}>Nenhum serviço próximo</Text>
               ) : (
-                servicesAround.length != 0 &&
                 servicesAround.map((service) => (
                   <TouchableOpacity
-                    onPress={() => toService(service._id)} // Passa a função corretamente
+                    onPress={() => toService(service._id)}
                     key={service._id}
                     style={styles.card}
                   >
@@ -270,7 +274,6 @@ export default function HomeScreen() {
           </View>
         </View>
       </ScrollView>
-      {/* <Navigation /> */}
     </>
   )
 }
