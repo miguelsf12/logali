@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  Pressable,
 } from "react-native"
 import Input from "../components/Input"
 import Entypo from "@expo/vector-icons/Entypo"
@@ -64,17 +65,9 @@ export default function SearchScreen() {
 
   return (
     <View style={styles.container}>
-      {/* <Input
-        placeholder="Procure o serviço que deseja"
-        style={{ backgroundColor: "#E8E8E8", fontSize: 12 }}
-        name="filter"
-        onChange={handleInputChange}
-        icon={
-          <Entypo name="magnifying-glass" onPress={onSubmit} size={24} color="black" />
-        }
-      /> */}
-
-      {/* Input */}
+      <Pressable style={{ marginBottom: "10" }} onPress={() => router.back()}>
+        <Text style={{ fontSize: "20" }}>Voltar</Text>
+      </Pressable>
       <View>
         <View
           style={{
