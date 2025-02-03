@@ -267,6 +267,7 @@ export default function OwnerServiceScreen() {
             <TextInput
               style={[styles.input, styles.textArea]}
               placeholder="Insira descrição do serviço"
+              placeholderTextColor={"#c7c7c7"}
               value={form.description}
               onChangeText={(text) => handleInputChange("description", text)}
               multiline
@@ -356,6 +357,7 @@ export default function OwnerServiceScreen() {
             >
               <TextInput
                 placeholder="Selecione uma categoria"
+                placeholderTextColor={"#c7c7c7"}
                 style={{
                   flex: 1,
                   padding: 16,
