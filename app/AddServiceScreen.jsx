@@ -57,7 +57,7 @@ const AddServiceScreen = () => {
       ...prevForm,
       category: category,
     }))
-    setModalVisible(false) // Fecha o modal após a seleção
+    setModalVisible(false)
   }
 
   const onSubmit = async () => {
