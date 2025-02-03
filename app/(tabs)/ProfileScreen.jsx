@@ -269,15 +269,6 @@ const ProfileScreen = () => {
             <Text style={styles.editButtonText}>Editar</Text>
           </Pressable>
         )}
-
-        {/* About Section */}
-        {/* <Text style={styles.sectionTitle}>Sobre mim</Text>
-        <View style={styles.aboutContainer}>
-          <View style={styles.aboutItem}>
-            <Text style={styles.aboutItemTitle}>Serviços Favoritos (IMPLEMENTAR)</Text>
-            <Text style={styles.aboutItemSubtitle}>500+ connections</Text>
-          </View>
-        </View> */}
       </ScrollView>
     </View>
   )
