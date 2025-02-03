@@ -8,6 +8,7 @@ import * as ImagePicker from "expo-image-picker"
 import { TouchableOpacity } from "react-native"
 import { router } from "expo-router"
 import { FontAwesome, Ionicons } from "@expo/vector-icons"
+import ReactContentLoader, { Rect, Circle } from "react-content-loader/native"
 
 const ProfileScreen = () => {
   const [form, setForm] = useState({
@@ -17,12 +18,14 @@ const ProfileScreen = () => {
   })
   const [token, setToken] = useState(null)
   const [userOn, setUserOn] = useState({})
+  const [loading, setLoading] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [image, setImage] = useState(null)
   const navigation = useNavigation()
 
   useEffect(() => {
     const checkToken = async () => {
+      setLoading(true)
       try {
         const token = await AsyncStorage.getItem("authToken")
         setToken(token)
@@ -33,14 +36,67 @@ const ProfileScreen = () => {
 
         const user = await getUserProfile(token)
         setUserOn(user)
-
       } catch (error) {
         console.error("Erro ao buscar usuário:", error)
+      } finally {
+        setLoading(false)
       }
     }
 
     checkToken()
   }, [token, navigation])
+
+  if (loading) {
+    return (
+      <ScrollView style={{ backgroundColor: "#fff" }}>
+        <View style={styles.container}>
+          {/* Skeleton Loader for Header */}
+          <ReactContentLoader
+            height={200}
+            speed={2}
+            primaryColor="#c3c3c3"
+            secondaryColor="#c3c3c3"
+          >
+            <Rect x="20" y="10" width="80%" height="20" />
+            <Rect x="20" y="50" width="90%" height="15" />
+            <Rect x="20" y="80" width="60%" height="15" />
+            <Circle cx="20" cy="120" r="10" />
+            <Rect x="40" y="110" width="80%" height="25" />
+          </ReactContentLoader>
+
+          {/* Skeleton Loader for Name */}
+          <ReactContentLoader
+            height={30}
+            speed={2}
+            primaryColor="#c3c3c3"
+            secondaryColor="#c3c3c3"
+          >
+            <Rect x="20" y="0" width="70%" height="20" />
+          </ReactContentLoader>
+
+          {/* Skeleton Loader for Email */}
+          <ReactContentLoader
+            height={30}
+            speed={2}
+            primaryColor="#c3c3c3"
+            secondaryColor="#c3c3c3"
+          >
+            <Rect x="20" y="0" width="70%" height="20" />
+          </ReactContentLoader>
+
+          {/* Skeleton Loader for Address */}
+          <ReactContentLoader
+            height={30}
+            speed={2}
+            primaryColor="#c3c3c3"
+            secondaryColor="#c3c3c3"
+          >
+            <Rect x="20" y="0" width="70%" height="20" />
+          </ReactContentLoader>
+        </View>
+      </ScrollView>
+    )
+  }
 
   const handleEdit = () => {
     setForm({
@@ -215,17 +271,13 @@ const ProfileScreen = () => {
         )}
 
         {/* About Section */}
-        <Text style={styles.sectionTitle}>Sobre mim</Text>
+        {/* <Text style={styles.sectionTitle}>Sobre mim</Text>
         <View style={styles.aboutContainer}>
-          {/* <View style={styles.aboutItem}>
-            <Text style={styles.aboutItemTitle}>Meu serviço</Text>
-            
-          </View> */}
           <View style={styles.aboutItem}>
             <Text style={styles.aboutItemTitle}>Serviços Favoritos (IMPLEMENTAR)</Text>
             <Text style={styles.aboutItemSubtitle}>500+ connections</Text>
           </View>
-        </View>
+        </View> */}
       </ScrollView>
     </View>
   )
