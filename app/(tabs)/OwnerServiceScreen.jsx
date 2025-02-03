@@ -24,6 +24,8 @@ import { FontAwesome } from "@expo/vector-icons"
 import categories from "../../category.json"
 import Service404 from "../Service404"
 
+import ReactContentLoader, { Rect, Circle } from "react-content-loader/native"
+
 export default function OwnerServiceScreen() {
   const [form, setForm] = useState({
     name: "",
@@ -33,7 +35,7 @@ export default function OwnerServiceScreen() {
   })
   const [token, setToken] = useState(null)
   const [userOn, setUserOn] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [service, setService] = useState(null)
   const navigation = useNavigation()
   const [isModalVisible, setModalVisible] = useState(false)
@@ -42,6 +44,7 @@ export default function OwnerServiceScreen() {
 
   useEffect(() => {
     const checkToken = async () => {
+      setLoading(true) // Inicia o carregamento
       try {
         const token = await AsyncStorage.getItem("authToken")
         setToken(token)
@@ -55,7 +58,6 @@ export default function OwnerServiceScreen() {
         setUserOn(user)
 
         const myService = await getMyService(token)
-
         setService(myService)
       } catch (error) {
         console.error("Erro ao buscar usuário:", error)
@@ -65,10 +67,59 @@ export default function OwnerServiceScreen() {
     }
 
     checkToken()
-  }, [token, navigation, service])
+  }, [navigation])
 
   if (loading) {
-    return <Text>Carregando...</Text> // Pode adicionar um spinner aqui, se quiser
+    return (
+      <ScrollView style={{ backgroundColor: "#fff" }}>
+        <View style={styles.container}>
+          {/* Skeleton Loader for Header */}
+          <ReactContentLoader
+            height={200}
+            speed={2}
+            primaryColor="#c3c3c3"
+            secondaryColor="#c3c3c3"
+          >
+            <Rect x="20" y="10" width="80%" height="20" />
+            <Rect x="20" y="50" width="90%" height="15" />
+            <Rect x="20" y="80" width="60%" height="15" />
+            <Circle cx="20" cy="120" r="10" />
+            <Rect x="40" y="110" width="80%" height="25" />
+          </ReactContentLoader>
+
+          {/* Skeleton Loader for Service Title */}
+          <ReactContentLoader
+            height={30}
+            speed={2}
+            primaryColor="#c3c3c3"
+            secondaryColor="#c3c3c3"
+          >
+            <Rect x="20" y="0" width="70%" height="20" />
+          </ReactContentLoader>
+
+          {/* Skeleton Loader for Description */}
+          <ReactContentLoader
+            height={60}
+            speed={2}
+            primaryColor="#c3c3c3"
+            secondaryColor="#c3c3c3"
+          >
+            <Rect x="20" y="10" width="90%" height="15" />
+            <Rect x="20" y="35" width="80%" height="15" />
+          </ReactContentLoader>
+
+          {/* Skeleton Loader for Image Grid */}
+          <ReactContentLoader
+            height={120}
+            speed={2}
+            primaryColor="#c3c3c3"
+            secondaryColor="#c3c3c3"
+          >
+            <Rect x="20" y="0" width="90%" height="100%" />
+          </ReactContentLoader>
+        </View>
+      </ScrollView>
+    )
   }
 
   if (!service) {
@@ -365,11 +416,11 @@ export default function OwnerServiceScreen() {
         )}
 
         {/* Promotion Button */}
-        <View style={styles.promotionButton}>
+        {/* <View style={styles.promotionButton}>
           <TouchableOpacity style={styles.primaryButton}>
             <Text style={styles.primaryButtonText}>Promover meu serviço</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
     </ScrollView>
   )
