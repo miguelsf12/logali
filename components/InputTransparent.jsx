@@ -16,6 +16,7 @@ export default function InputTransparent({
           style={style}
           autoFocus={true}
           placeholder={placeholder}
+          placeholderTextColor={"#c7c7c7"}
           secureTextEntry={secureTextEntry}
           value={value}
           onChangeText={(text) => onChange(name, text)}

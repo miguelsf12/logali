@@ -13,18 +13,17 @@ export default function Input({
   return (
     <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
       <View
-        style={[
-          {
-            flexDirection: "row",
-            borderRadius: 16,
-            alignItems: "center",
-          },
-          style,
-        ]}
+        style={{
+          flexDirection: "row",
+          borderRadius: 16,
+          alignItems: "center",
+          backgroundColor: "#D1D1D1",
+        }}
       >
         <TextInput
           autoFocus={false}
           placeholder={placeholder}
+          placeholderTextColor={"#7d7d7d"}
           style={{
             flex: 1,
             padding: 16,
@@ -33,9 +32,8 @@ export default function Input({
             justifyContent: "center",
             height: 53,
             fontSize: 16,
-            color: "#1C1D22",
+            color: "#7d7d7d",
             borderTopLeftRadius: 16,
-
             borderBottomLeftRadius: 16,
           }}
           secureTextEntry={secureTextEntry}
@@ -47,14 +45,12 @@ export default function Input({
           style={[
             {
               paddingHorizontal: 16,
-              // backgroundColor: "#EEEFF2",
               borderTopRightRadius: 16,
               borderBottomRightRadius: 16,
             },
             style,
           ]}
         >
-          {/* Envelope Icon */}
           {icon ? icon : ""}
         </View>
       </View>

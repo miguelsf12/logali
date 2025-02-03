@@ -16,6 +16,7 @@ export default function InputOutlined({
         <TextInput
           autoFocus={false}
           placeholder={placeholder}
+          placeholderTextColor={"#c7c7c7"}
           style={[style, styles.textInput]}
           value={value}
           onChangeText={(text) => onChange(name, text)}
