@@ -1,5 +1,4 @@
 import {
-  ActivityIndicator,
   Image,
   Platform,
   ScrollView,
@@ -9,9 +8,8 @@ import {
   View,
 } from "react-native"
 import Map from "../../components/Map"
-import Input from "../../components/Input"
+import ReactContentLoader, { Rect } from "react-content-loader/native"
 import { useEffect, useState } from "react"
-import { FontAwesome } from "@expo/vector-icons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { sendActualLocation } from "../../services/clientService"
 import { useNavigation } from "@react-navigation/native"
@@ -123,23 +121,6 @@ export default function MapScreen() {
           <Text style={styles.title}>Carregando loc</Text>
         )}
         <Map style={styles.map} />
-        {/* <View style={styles.inputContainer}>
-          <Input
-            placeholder="Insira sua localização"
-            style={styles.inputLoc}
-            name="address"
-            onChange={handleInputChange}
-            value={inputValue}
-            icon={
-              <FontAwesome
-                onPress={onSubmitLoc}
-                name="location-arrow"
-                size={24}
-                color="#7d7d7d"
-              />
-            }
-          />
-        </View> */}
 
         <View style={styles.containerService}>
           <Text style={styles.title}>Serviços Próximos</Text>
@@ -164,7 +145,14 @@ export default function MapScreen() {
 
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {loading ? (
-              <ActivityIndicator size="large" color="#0000ff" /> // Exibe o loading
+              <ReactContentLoader
+                width={150}
+                speed={2}
+                primaryColor="#7d7d7d"
+                secondaryColor="#7d7d7d"
+              >
+                <Rect x="20" y="10" width="100%" height="130" />
+              </ReactContentLoader>
             ) : servicesAround.length < 1 ? (
               <Text style={styles.noServicesText}>Nenhum serviço próximo</Text>
             ) : (
